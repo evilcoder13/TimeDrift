@@ -17,11 +17,11 @@ services:
       - AUTH_SECRET=${AUTH_SECRET:-changeme-production-secret-timedrift}
       - AUTH_TRUST_HOST=true
       - ADMIN_EMAILS=${ADMIN_EMAILS:-admin@timedrift.local}
-      # Local Ollama in Docker Network
-      - LLM_BASE_URL=http://llm:11434/v1
-      - LLM_API_KEY=ollama
-      - LLM_MODEL=${LLM_MODEL:-qwen2.5-coder:3b}
-      - LLM_FALLBACK_MODEL=${LLM_FALLBACK_MODEL:-qwen2.5-coder:1.5b}
+      # Internal Docker Network to lightweight LLM worker
+      - LLM_BASE_URL=http://llm:8000/v1
+      - LLM_API_KEY=not-needed
+      - LLM_MODEL=${LLM_MODEL:-default}
+      - LLM_FALLBACK_MODEL=${LLM_FALLBACK_MODEL:-default}
       - MUSIC_WORKER_URL=http://worker:8100
       - NEXT_PUBLIC_FREE_MAX_MINUTES=15
       - NEXT_PUBLIC_PRO_MAX_MINUTES=720
@@ -66,19 +66,27 @@ services:
       start_period: 30s
 
   llm:
-    image: ollama/ollama:latest
+    build:
+      context: ./worker/llm
+      dockerfile: Dockerfile
     container_name: timedrift_llm
     restart: unless-stopped
     ports:
-      - "11434:11434"
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - HOST=0.0.0.0
+      - MODELS_DIR=/models
+      - MODEL_REPO=Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF
+      - MODEL_FILENAME=qwen2.5-coder-1.5b-instruct-q4_k_m.gguf
     volumes:
-      - timedrift_ollama:/root/.ollama
+      - timedrift_models:/models
     healthcheck:
-      test: ["CMD", "ollama", "list"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 15s
       timeout: 5s
       retries: 5
-      start_period: 15s
+      start_period: 20s
 
 volumes:
   timedrift_data:
@@ -89,5 +97,3 @@ volumes:
     name: timedrift_models
   timedrift_hf_cache:
     name: timedrift_hf_cache
-  timedrift_ollama:
-    name: timedrift_ollama
