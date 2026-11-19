@@ -1,0 +1,93 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: timedrift_web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=file:/app/data/timedrift.db
+      - STORAGE_DIR=/app/storage
+      - STORAGE_AUDIO_DIR=/app/storage/audio
+      - STORAGE_BUNDLES_DIR=/app/storage/bundles
+      - AUTH_SECRET=${AUTH_SECRET:-changeme-production-secret-timedrift}
+      - AUTH_TRUST_HOST=true
+      - ADMIN_EMAILS=${ADMIN_EMAILS:-admin@timedrift.local}
+      # Local Ollama in Docker Network
+      - LLM_BASE_URL=http://llm:11434/v1
+      - LLM_API_KEY=ollama
+      - LLM_MODEL=${LLM_MODEL:-qwen2.5-coder:3b}
+      - LLM_FALLBACK_MODEL=${LLM_FALLBACK_MODEL:-qwen2.5-coder:1.5b}
+      - MUSIC_WORKER_URL=http://worker:8100
+      - NEXT_PUBLIC_FREE_MAX_MINUTES=15
+      - NEXT_PUBLIC_PRO_MAX_MINUTES=720
+    volumes:
+      - timedrift_data:/app/data
+      - timedrift_storage:/app/storage
+    depends_on:
+      worker:
+        condition: service_healthy
+      llm:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+
+  worker:
+    build:
+      context: ./worker/music
+      dockerfile: Dockerfile
+    container_name: timedrift_worker
+    restart: unless-stopped
+    expose:
+      - "8100"
+    environment:
+      - PORT=8100
+      - HOST=0.0.0.0
+      - STORAGE_DIR=/app/storage
+      - MUSICGEN_MODEL_ID=facebook/musicgen-small
+      - USE_PROCEDURAL_DUMMY=${USE_PROCEDURAL_DUMMY:-false}
+    volumes:
+      - timedrift_storage:/app/storage
+      - timedrift_models:/models
+      - timedrift_hf_cache:/home/worker/.cache/huggingface
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  llm:
+    image: ollama/ollama:latest
+    container_name: timedrift_llm
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - timedrift_ollama:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+volumes:
+  timedrift_data:
+    name: timedrift_data
+  timedrift_storage:
+    name: timedrift_storage
+  timedrift_models:
+    name: timedrift_models
+  timedrift_hf_cache:
+    name: timedrift_hf_cache
+  timedrift_ollama:
+    name: timedrift_ollama
