@@ -1,0 +1,250 @@
+{
+  "app": {
+    "title": "TimeDrift",
+    "tagline": "Open, press play, drift.",
+    "theme_day": "Day",
+    "theme_night": "Night",
+    "switch_locale": "Language",
+    "loading": "Loading..."
+  },
+  "nav": {
+    "sanctuary": "Sanctuary",
+    "custom": "Custom Pair",
+    "journeys": "Journeys",
+    "account": "Sanctuary Pass",
+    "admin": "Admin"
+  },
+  "home": {
+    "title": "Drift into stillness",
+    "subtitle": "Animated hand-drawn line art and seamless acoustic loops on your time",
+    "quick_drift": "Quick Drift (15 min)",
+    "random_drift": "Drift Randomly",
+    "filter_all": "All",
+    "filter_by_mood": "Filter by Mood",
+    "empty_templates": "No serene spaces are currently open. Please check back soon.",
+    "empty_random": "No published content available."
+  },
+  "template": {
+    "author_attribution": "Curated by {author}",
+    "play_cta": "Begin Drift",
+    "duration_label": "{minutes} min"
+  },
+  "random": {
+    "title": "Random Pair",
+    "selected": "{scene} and {music}",
+    "loading": "Finding a serene space...",
+    "no_matches": "No published spaces available."
+  },
+  "duration": {
+    "title": "Choose Duration",
+    "subtitle": "Select how long you wish to drift",
+    "presets": {
+      "3": "3 min",
+      "5": "5 min",
+      "10": "10 min",
+      "15": "15 min",
+      "30": "30 min",
+      "60": "1 hour",
+      "120": "2 hours",
+      "240": "4 hours",
+      "480": "8 hours",
+      "720": "12 hours"
+    },
+    "custom_slider_label": "Duration",
+    "free_limit_hint": "Free sessions are 3 to 15 minutes. Unlock up to 12 hours with Pro.",
+    "pro_limit_hint": "Extended sessions available up to 12 hours (720 min).",
+    "minutes_display": "{minutes, plural, one {# minute} other {# minutes}}",
+    "start_session": "Begin Drift",
+    "cancel": "Cancel",
+    "locked_pro": "Pro"
+  },
+  "player": {
+    "title": "Drifting",
+    "scene_label": "Scene: {scene}",
+    "music_label": "Music: {music}",
+    "paused": "Paused",
+    "playing": "Playing",
+    "time_remaining": "{time} left",
+    "exit": "Exit Drift",
+    "controls": {
+      "play": "Play",
+      "pause": "Pause",
+      "next_random": "Drift to Another Scene",
+      "volume": "Sound level",
+      "mute": "Mute",
+      "unmute": "Unmute",
+      "fullscreen_enter": "Enter Fullscreen",
+      "fullscreen_exit": "Exit Fullscreen"
+    },
+    "dissolving": "Dissolving...",
+    "pro_expired_notice": "Pro expired. Current drift will continue until finished."
+  },
+  "end_screen": {
+    "title": "Session Complete",
+    "subtitle": "May peace remain with you as you return.",
+    "replay": "Replay Session",
+    "random": "Drift to Another Scene",
+    "home": "Return to Sanctuary"
+  },
+  "custom": {
+    "title": "Custom Harmonization",
+    "subtitle": "Pair any line-art drawing with any acoustic melody",
+    "step_scene": "Step 1: Select Scene",
+    "step_music": "Step 2: Select Melody",
+    "audition": "Audition",
+    "audition_stop": "Stop",
+    "match_score": "{score}% Harmony",
+    "play_custom": "Play Custom Pair",
+    "pro_required_title": "Pro Sanctuary Feature",
+    "pro_required_desc": "Harmonize any line-art drawing with any acoustic melody of your choice."
+  },
+  "playlists": {
+    "title": "My Journeys",
+    "subtitle": "Create sequential drifting sessions with acoustic crossfades",
+    "new_journey": "New Journey",
+    "journey_title_placeholder": "Name your journey...",
+    "item_count": "{count, plural, one {# scene} other {# scenes}} (maximum 50)",
+    "total_duration": "Total Planned: {minutes} / 720 min max",
+    "cap_warning": "Journeys cannot exceed 12 hours (720 min) — Rule R5",
+    "item_duration": "Duration (min)",
+    "remove_item": "Remove",
+    "save": "Save Journey",
+    "play": "Begin Journey",
+    "empty": "No items in this journey yet. Add a template or custom pair."
+  },
+  "upsell": {
+    "title": "Enter the Deeper Sanctuary",
+    "subtitle": "Unhurried time for deep work, uninterrupted rest, and personal harmony.",
+    "features": {
+      "timers_title": "Extended Sessions up to 12 Hours",
+      "timers_desc": "Continuous ambient drift without interruption for sleep and long workdays.",
+      "custom_title": "Custom Line-Art & Melody Pairs",
+      "custom_desc": "Harmonize any artwork with any acoustic track of your choice.",
+      "playlists_title": "Curated Journeys & Playlists",
+      "playlists_desc": "Build multi-scene journeys with smooth 3-second acoustic transitions.",
+      "unlimited_title": "Always Uncapped",
+      "unlimited_desc": "Drift whenever you need without daily session caps or interruptions."
+    },
+    "cta_unlock": "Unlock Pro Sanctuary",
+    "cta_dismiss": "Stay in Gentle Drift"
+  },
+  "account": {
+    "title": "Sanctuary Pass",
+    "status_free": "Gentle Drift (Free)",
+    "status_pro": "Pro Sanctuary Member",
+    "pro_active_until": "Pro active until {date}",
+    "manage_pro": "Manage Sanctuary Pass",
+    "sign_in": "Sign in with Email",
+    "sign_out": "Sign out"
+  },
+  "tags": {
+    "calm": "Calm",
+    "sleepy": "Sleepy",
+    "focus": "Focus",
+    "cozy": "Cozy",
+    "nostalgic": "Nostalgic",
+    "rainy": "Rainy",
+    "dreamy": "Dreamy",
+    "warm": "Warm",
+    "peaceful": "Peaceful",
+    "morning": "Morning",
+    "night": "Night",
+    "nature": "Nature"
+  },
+  "job_status": {
+    "queued": "Resting in queue...",
+    "running_music": "Composing acoustic melody...",
+    "running_scene": "Inking line-art strokes...",
+    "validating": "Verifying smoothness and safety...",
+    "ready": "Ready to publish",
+    "failed": "Creation paused due to an error"
+  },
+  "code_editor": {
+    "title": "Scene Source",
+    "save": "Save Changes",
+    "rebuild": "Rebuild & Validate",
+    "copy": "Copy Source",
+    "clear": "Clear"
+  },
+  "data_table": {
+    "search": "Search",
+    "no_results": "No items found",
+    "actions": {
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "delete": "Delete"
+    }
+  },
+  "toast": {
+    "success": "Changes saved",
+    "error": "An issue occurred",
+    "warning": "Notice",
+    "info": "Information"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "tags": {
+      "title": "Tags",
+      "add": "Add Tag",
+      "edit": "Edit",
+      "delete_confirm": "Delete this tag? It will be removed from all assigned items."
+    },
+    "music": {
+      "title": "Music",
+      "generate": "Generate Acoustic Track",
+      "duration": "Length (30s, 45s, 60s)",
+      "prompt_placeholder": "Describe acoustic textures, tempo, and instruments..."
+    },
+    "scenes": {
+      "title": "Scenes",
+      "generate": "Generate Line-Art Scene",
+      "prompt_placeholder": "Describe the calm line-art scene, subjects, and motion...",
+      "day_night_scrub": "Preview Day/Night Lighting"
+    },
+    "templates": {
+      "title": "Templates",
+      "create": "Create Template",
+      "suggest": "Suggest Pairs (Jaccard)",
+      "score_label": "Similarity: {score}"
+    },
+    "users": {
+      "title": "Users",
+      "grant_pro": "Grant Pro",
+      "revoke_pro": "Revoke Pro",
+      "set_expiry": "Set Expiry Date"
+    },
+    "health": {
+      "title": "Service Health",
+      "omlx": "LLM Server (omlx)",
+      "worker": "Music Worker (MusicGen)",
+      "all_good": "All systems operational",
+      "omlx_down": "LLM unreachable",
+      "worker_down": "Worker unreachable",
+      "refresh": "Refresh Status"
+    }
+  },
+  "errors": {
+    "TIMER_LIMIT_FREE": "Free sessions are limited to between 3 and 15 minutes.",
+    "TIMER_LIMIT_PRO": "Sessions cannot exceed 720 minutes (12 hours).",
+    "PRO_REQUIRED": "This sanctuary feature is reserved for Pro members.",
+    "PLAYLIST_ITEM_LIMIT": "A journey can contain between 1 and 50 scenes.",
+    "PLAYLIST_TOTAL_CAP": "Total journey duration cannot exceed 720 minutes (12 hours).",
+    "NO_PUBLISHED_CONTENT": "No serene spaces are currently open. Please check back soon.",
+    "UNPUBLISHED_DEPENDENCY": "A template can only be published when both its scene and melody are published.",
+    "MUSIC_NOT_READY": "Melody loop processing is still completing.",
+    "SCENE_INVALID": "Scene animation failed verification checks.",
+    "ITEM_IN_USE": "This item cannot be deleted because active templates or journeys depend on it.",
+    "UNAUTHORIZED": "Please sign in to access your sanctuary.",
+    "FORBIDDEN": "Access to this area is restricted.",
+    "NETWORK_DISCONNECTED": "Connection paused. Stillness remains while reconnecting...",
+    "SERVICE_UNAVAILABLE": "The sanctuary is momentarily resting. We will be back shortly."
+  },
+  "util": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm_delete": "Delete this item?",
+    "copy": "Copy",
+    "close": "Close"
+  }
+}

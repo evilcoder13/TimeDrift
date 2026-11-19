@@ -1,0 +1,37 @@
+[
+  {
+    "id": "bench-1-rainy",
+    "name": "Rainy Bus Stop",
+    "tag": "rainy",
+    "tags": ["rainy", "calm", "nostalgic"],
+    "prompt": "A quiet wooden bus stop in the countryside during a steady rain. Water droplets drip rhythmically from the tin roof into puddles with subtle expanding ripples. A single cat sits sheltered on the wooden bench, blinking slowly. Line-art style on parchment."
+  },
+  {
+    "id": "bench-2-calm",
+    "name": "Bonsai Balcony",
+    "tag": "calm",
+    "tags": ["calm", "peaceful", "nature"],
+    "prompt": "An old bonsai tree perched on a stone balcony overlooking rolling hills. Gentle wind sways the pine needles slowly. Two leaves detach and drift down gracefully. Ink wash line drawing."
+  },
+  {
+    "id": "bench-3-nostalgic",
+    "name": "Vintage Bicycle",
+    "tag": "nostalgic",
+    "tags": ["nostalgic", "warm", "cozy"],
+    "prompt": "A vintage bicycle parked against a brick wall beneath an old street lantern. Clothes hang on a balcony wire above, swaying softly in a light evening breeze. Detailed hatched ink lines."
+  },
+  {
+    "id": "bench-4-peaceful",
+    "name": "Bamboo Grove",
+    "tag": "peaceful",
+    "tags": ["peaceful", "nature", "focus"],
+    "prompt": "A tranquil bamboo grove beside a small stone basin with a traditional shishi-odoshi (wooden water fountain) rocking down every 8 seconds. Ink wash aesthetic."
+  },
+  {
+    "id": "bench-5-night",
+    "name": "Cabin Fireflies",
+    "tag": "night",
+    "tags": ["night", "sleepy", "dreamy"],
+    "prompt": "A small cabin window overlooking a pine forest under a crescent moon. Inside the window, a warm yellow lantern light flickers gently. Soft fireflies drift across the glass. Dark ink with warm amber glows."
+  }
+]

@@ -1,0 +1,250 @@
+{
+  "app": {
+    "title": "TimeDrift",
+    "tagline": "Mở ra, chạm khẽ, trôi vào an yên.",
+    "theme_day": "Ban ngày",
+    "theme_night": "Ban đêm",
+    "switch_locale": "Ngôn ngữ",
+    "loading": "Đang tải..."
+  },
+  "nav": {
+    "sanctuary": "Trang chủ",
+    "custom": "Phối ngẫu hứng",
+    "journeys": "Hành trình",
+    "account": "Tài khoản",
+    "admin": "Quản trị"
+  },
+  "home": {
+    "title": "Trôi vào tĩnh lặng",
+    "subtitle": "Nét vẽ tay uyển chuyển và giai điệu mộc không dứt theo thời gian của bạn",
+    "quick_drift": "Bắt đầu nhanh (15p)",
+    "random_drift": "Không gian ngẫu nhiên",
+    "filter_all": "Tất cả",
+    "filter_by_mood": "Lọc theo cảm xúc",
+    "empty_templates": "Hiện chưa có không gian nào được phát hành. Vui lòng quay lại sau ít phút.",
+    "empty_random": "Nội dung chưa sẵn sàng."
+  },
+  "template": {
+    "author_attribution": "Được tuyển chọn bởi {author}",
+    "play_cta": "Bắt đầu trôi",
+    "duration_label": "{minutes} phút"
+  },
+  "random": {
+    "title": "Bộ đôi ngẫu nhiên",
+    "selected": "{scene} và {music}",
+    "loading": "Đang tìm kiếm không gian thanh tịnh...",
+    "no_matches": "Chưa có không gian nào khả dụng."
+  },
+  "duration": {
+    "title": "Chọn thời gian thả trôi",
+    "subtitle": "Chọn khoảng thời gian bạn muốn thả mình thư giãn",
+    "presets": {
+      "3": "3 phút",
+      "5": "5 phút",
+      "10": "10 phút",
+      "15": "15 phút",
+      "30": "30 phút",
+      "60": "1 giờ",
+      "120": "2 giờ",
+      "240": "4 giờ",
+      "480": "8 giờ",
+      "720": "12 giờ"
+    },
+    "custom_slider_label": "Thời lượng",
+    "free_limit_hint": "Phiên tiêu chuẩn kéo dài từ 3 đến 15 phút. Mở khóa lên đến 12 giờ với Pro.",
+    "pro_limit_hint": "Phiên mở rộng hỗ trợ lên đến 12 giờ (720 phút).",
+    "minutes_display": "{minutes} phút",
+    "start_session": "Bắt đầu trôi",
+    "cancel": "Hủy",
+    "locked_pro": "Pro"
+  },
+  "player": {
+    "title": "Đang thư giãn",
+    "scene_label": "Cảnh vẽ: {scene}",
+    "music_label": "Giai điệu: {music}",
+    "paused": "Đang tạm dừng",
+    "playing": "Đang phát",
+    "time_remaining": "Còn lại {time}",
+    "exit": "Rời không gian",
+    "controls": {
+      "play": "Bắt đầu phát",
+      "pause": "Tạm dừng",
+      "next_random": "Sang một không gian khác",
+      "volume": "Âm lượng",
+      "mute": "Tắt âm",
+      "unmute": "Bật âm",
+      "fullscreen_enter": "Toàn màn hình",
+      "fullscreen_exit": "Thu nhỏ màn hình"
+    },
+    "dissolving": "Âm thanh đang hòa quyện...",
+    "pro_expired_notice": "Hạn Pro đã hết. Phiên hiện tại sẽ tiếp tục đến khi hoàn tất."
+  },
+  "end_screen": {
+    "title": "Thời khắc trọn vẹn",
+    "subtitle": "Chúc bạn giữ mãi sự an yên khi trở về với nhịp sống.",
+    "replay": "Lặp lại buổi này",
+    "random": "Sang một không gian khác",
+    "home": "Trở về trang chủ"
+  },
+  "custom": {
+    "title": "Phối ngẫu hứng",
+    "subtitle": "Tự do kết hợp bất kỳ bức tranh nét vẽ nào với khúc nhạc bạn yêu thích",
+    "step_scene": "Bước 1: Chọn cảnh vẽ",
+    "step_music": "Bước 2: Chọn giai điệu",
+    "audition": "Nghe thử",
+    "audition_stop": "Dừng",
+    "match_score": "Độ hòa hợp {score}%",
+    "play_custom": "Bắt đầu phối ngẫu hứng",
+    "pro_required_title": "Tính năng Không Gian Pro",
+    "pro_required_desc": "Tự do kết hợp bất kỳ bức tranh nét vẽ nào với khúc nhạc mộc mạc bạn yêu thích."
+  },
+  "playlists": {
+    "title": "Hành trình của tôi",
+    "subtitle": "Tạo chuỗi các phân cảnh thư giãn với chuyển tiếp âm thanh êm dịu",
+    "new_journey": "Hành trình mới",
+    "journey_title_placeholder": "Đặt tên cho hành trình...",
+    "item_count": "{count} cảnh (tối đa 50)",
+    "total_duration": "Tổng dự kiến: {minutes} / 720 phút tối đa",
+    "cap_warning": "Hành trình không thể vượt quá 12 giờ (720 phút) — Quy tắc R5",
+    "item_duration": "Thời lượng (phút)",
+    "remove_item": "Gỡ bỏ",
+    "save": "Lưu hành trình",
+    "play": "Bắt đầu hành trình",
+    "empty": "Hành trình này chưa có mục nào. Hãy thêm khung mẫu hoặc bộ đôi tùy chỉnh."
+  },
+  "upsell": {
+    "title": "Bước vào Không Gian Tĩnh Tại (Pro)",
+    "subtitle": "Thêm thời gian cho sự tập trung sâu, giấc ngủ trọn vẹn và sự hòa quyện tự do.",
+    "features": {
+      "timers_title": "Phiên thả trôi kéo dài đến 12 giờ",
+      "timers_desc": "Không gian phát êm dịu liên tục không ngắt quãng cho giấc ngủ và ngày làm việc dài.",
+      "custom_title": "Tự do phối tranh vẽ và giai điệu",
+      "custom_desc": "Kết hợp bất kỳ bức tranh nét vẽ nào với khúc nhạc acoustic bạn say mê.",
+      "playlists_title": "Chuỗi hành trình không đứt đoạn",
+      "playlists_desc": "Thiết lập danh sách phát nhiều cảnh với chuyển tiếp âm thanh êm ái 3 giây.",
+      "unlimited_title": "Không bao giờ giới hạn",
+      "unlimited_desc": "Thả trôi bất cứ khi nào bạn cần mà không gặp bất kỳ giới hạn hàng ngày nào."
+    },
+    "cta_unlock": "Mở khóa Không Gian Pro",
+    "cta_dismiss": "Tiếp tục phiên thông thường"
+  },
+  "account": {
+    "title": "Thẻ Không Gian",
+    "status_free": "Thả trôi êm dịu (Miễn phí)",
+    "status_pro": "Thành viên Không Gian Pro",
+    "pro_active_until": "Hạn dùng Pro đến {date}",
+    "manage_pro": "Quản lý thẻ thành viên",
+    "sign_in": "Đăng nhập bằng Email",
+    "sign_out": "Đăng xuất"
+  },
+  "tags": {
+    "calm": "Bình yên",
+    "sleepy": "Buồn ngủ",
+    "focus": "Tập trung",
+    "cozy": "Ấm cúng",
+    "nostalgic": "Hoài niệm",
+    "rainy": "Mưa",
+    "dreamy": "Mơ màng",
+    "warm": "Ấm áp",
+    "peaceful": "Thanh thản",
+    "morning": "Buổi sáng",
+    "night": "Đêm",
+    "nature": "Thiên nhiên"
+  },
+  "job_status": {
+    "queued": "Đang trong hàng chờ...",
+    "running_music": "Đang sáng tác giai điệu mộc...",
+    "running_scene": "Đang phác thảo nét mực...",
+    "validating": "Đang kiểm định chuyển động và an toàn...",
+    "ready": "Đã sẵn sàng phát hành",
+    "failed": "Quá trình tạo gặp trở ngại"
+  },
+  "code_editor": {
+    "title": "Mã nguồn Scene",
+    "save": "Lưu thay đổi",
+    "rebuild": "Xây dựng lại và kiểm định",
+    "copy": "Sao chép mã nguồn",
+    "clear": "Xóa trắng"
+  },
+  "data_table": {
+    "search": "Tìm kiếm",
+    "no_results": "Không tìm thấy nội dung",
+    "actions": {
+      "publish": "Phát hành",
+      "unpublish": "Ngừng phát hành",
+      "delete": "Xóa"
+    }
+  },
+  "toast": {
+    "success": "Đã lưu thay đổi",
+    "error": "Có vấn đề phát sinh",
+    "warning": "Lưu ý",
+    "info": "Thông tin"
+  },
+  "admin": {
+    "title": "Bảng điều khiển Quản trị",
+    "tags": {
+      "title": "Thẻ cảm xúc",
+      "add": "Thêm thẻ",
+      "edit": "Chỉnh sửa",
+      "delete_confirm": "Xóa thẻ này? Thẻ sẽ được gỡ khỏi tất cả mục đang sử dụng."
+    },
+    "music": {
+      "title": "Âm nhạc",
+      "generate": "Tạo bản nhạc mộc",
+      "duration": "Thời lượng (30s, 45s, 60s)",
+      "prompt_placeholder": "Mô tả chất âm mộc, nhịp điệu và nhạc cụ..."
+    },
+    "scenes": {
+      "title": "Cảnh vẽ",
+      "generate": "Tạo cảnh nét vẽ tay",
+      "prompt_placeholder": "Mô tả bức tranh tĩnh lặng, chủ thể và chuyển động nhẹ...",
+      "day_night_scrub": "Xem trước ánh sáng Ngày/Đêm"
+    },
+    "templates": {
+      "title": "Khung mẫu",
+      "create": "Tạo khung mẫu",
+      "suggest": "Gợi ý phối ngẫu (Jaccard)",
+      "score_label": "Độ tương đồng: {score}"
+    },
+    "users": {
+      "title": "Người dùng",
+      "grant_pro": "Cấp quyền Pro",
+      "revoke_pro": "Thu hồi Pro",
+      "set_expiry": "Đặt ngày hết hạn"
+    },
+    "health": {
+      "title": "Tình trạng dịch vụ",
+      "omlx": "Máy chủ LLM (omlx)",
+      "worker": "Tiến trình nhạc (MusicGen)",
+      "all_good": "Mọi hệ thống đang vận hành êm ả",
+      "omlx_down": "Không thể kết nối máy chủ LLM",
+      "worker_down": "Không thể kết nối tiến trình tạo nhạc",
+      "refresh": "Làm mới trạng thái"
+    }
+  },
+  "errors": {
+    "TIMER_LIMIT_FREE": "Phiên tiêu chuẩn chỉ từ 3 đến 15 phút. Bạn có thể mở khóa Pro để kéo dài hơn.",
+    "TIMER_LIMIT_PRO": "Thời lượng phiên tối đa là 720 phút (12 giờ).",
+    "PRO_REQUIRED": "Tính năng này dành riêng cho thành viên Pro.",
+    "PLAYLIST_ITEM_LIMIT": "Một hành trình có thể chứa từ 1 đến 50 phân đoạn.",
+    "PLAYLIST_TOTAL_CAP": "Tổng thời lượng hành trình không thể vượt quá 720 phút (12 giờ).",
+    "NO_PUBLISHED_CONTENT": "Hiện chưa có không gian nào được phát hành. Vui lòng quay lại sau ít phút.",
+    "UNPUBLISHED_DEPENDENCY": "Khung mẫu chỉ có thể phát hành khi cả tranh vẽ và bản nhạc đều đã xuất bản.",
+    "MUSIC_NOT_READY": "Bản nhạc vẫn đang được xử lý vòng lặp.",
+    "SCENE_INVALID": "Cảnh vẽ chưa vượt qua bước kiểm định an toàn và hiệu năng.",
+    "ITEM_IN_USE": "Không thể xóa mục này vì đang được dùng trong khung mẫu hoặc hành trình khác.",
+    "UNAUTHORIZED": "Vui lòng đăng nhập để bước vào không gian của bạn.",
+    "FORBIDDEN": "Bạn không có quyền truy cập khu vực này.",
+    "NETWORK_DISCONNECTED": "Kết nối gián đoạn. Không gian vẫn được giữ nguyên trong lúc kết nối lại...",
+    "SERVICE_UNAVAILABLE": "Hệ thống đang tạm nghỉ trong giây lát. Bạn vui lòng quay lại sau nhé."
+  },
+  "util": {
+    "loading": "Đang tải...",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "confirm_delete": "Xóa mục này?",
+    "copy": "Sao chép",
+    "close": "Đóng"
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "version": "1.0.0",
+  "standard": {
+    "lufs": "-16.0 LUFS ± 1.0 LUFS",
+    "peak": "≤ -1.0 dBTP",
+    "seamCrossfadeSec": 4.0,
+    "format": "OGG Vorbis, 32 kHz Mono"
+  },
+  "tracks": [
+    {
+      "id": "m1",
+      "slug": "rainy-window",
+      "nameEn": "Rainy Window",
+      "nameVi": "Cửa sổ mưa",
+      "type": "piano",
+      "duration": 30,
+      "format": "ogg/vorbis",
+      "channels": 1,
+      "sampleRate": 32000,
+      "file": "seed/audio/m1.ogg",
+      "storagePath": "storage/audio/m1.ogg",
+      "tags": [
+        "rainy",
+        "calm",
+        "nostalgic"
+      ],
+      "prompt": "soft solo piano, gentle rain mood, 65 bpm, warm reverb, sparse melody, no vocals, loopable, soft dynamics",
+      "lufs": -16.62,
+      "peakDbtp": -1.0,
+      "seamDelta": 0.0,
+      "seamRmsDiffDb": 0.23,
+      "loopable": true,
+      "status": "APPROVED"
+    },
+    {
+      "id": "m2",
+      "slug": "paper-lanterns",
+      "nameEn": "Paper Lanterns",
+      "nameVi": "Đèn lồng giấy",
+      "type": "ambient",
+      "duration": 30,
+      "format": "ogg/vorbis",
+      "channels": 1,
+      "sampleRate": 32000,
+      "file": "seed/audio/m2.ogg",
+      "storagePath": "storage/audio/m2.ogg",
+      "tags": [
+        "night",
+        "sleepy",
+        "dreamy"
+      ],
+      "prompt": "ambient pad, slow evolving synth, distant chimes, 55 bpm, airy, no drums, no vocals, loopable",
+      "lufs": -16.0,
+      "peakDbtp": -3.72,
+      "seamDelta": 0.0,
+      "seamRmsDiffDb": 0.28,
+      "loopable": true,
+      "status": "APPROVED"
+    },
+    {
+      "id": "m3",
+      "slug": "morning-tea",
+      "nameEn": "Morning Tea",
+      "nameVi": "Trà sáng",
+      "type": "acoustic",
+      "duration": 30,
+      "format": "ogg/vorbis",
+      "channels": 1,
+      "sampleRate": 32000,
+      "file": "seed/audio/m3.ogg",
+      "storagePath": "storage/audio/m3.ogg",
+      "tags": [
+        "morning",
+        "peaceful",
+        "cozy",
+        "warm"
+      ],
+      "prompt": "fingerpicked acoustic guitar, light shaker, 75 bpm, warm, cozy, peaceful, no vocals, loopable",
+      "lufs": -16.0,
+      "peakDbtp": -4.58,
+      "seamDelta": 0.0,
+      "seamRmsDiffDb": 0.46,
+      "loopable": true,
+      "status": "APPROVED"
+    },
+    {
+      "id": "m4",
+      "slug": "study-room",
+      "nameEn": "Study Room",
+      "nameVi": "Phòng học",
+      "type": "lofi",
+      "duration": 30,
+      "format": "ogg/vorbis",
+      "channels": 1,
+      "sampleRate": 32000,
+      "file": "seed/audio/m4.ogg",
+      "storagePath": "storage/audio/m4.ogg",
+      "tags": [
+        "focus",
+        "cozy",
+        "calm"
+      ],
+      "prompt": "lofi hip hop, mellow rhodes, soft vinyl crackle, muted kick, 72 bpm, no vocals, loopable",
+      "lufs": -16.98,
+      "peakDbtp": -1.0,
+      "seamDelta": 0.0,
+      "seamRmsDiffDb": 0.25,
+      "loopable": true,
+      "status": "APPROVED"
+    },
+    {
+      "id": "m5",
+      "slug": "village-dusk",
+      "nameEn": "Village Dusk",
+      "nameVi": "Hoàng hôn làng",
+      "type": "strings",
+      "duration": 30,
+      "format": "ogg/vorbis",
+      "channels": 1,
+      "sampleRate": 32000,
+      "file": "seed/audio/m5.ogg",
+      "storagePath": "storage/audio/m5.ogg",
+      "tags": [
+        "nostalgic",
+        "warm",
+        "peaceful"
+      ],
+      "prompt": "slow string quartet, pastoral, 60 bpm, warm legato, no percussion, no vocals, loopable",
+      "lufs": -16.0,
+      "peakDbtp": -4.16,
+      "seamDelta": 0.0,
+      "seamRmsDiffDb": 0.07,
+      "loopable": true,
+      "status": "APPROVED"
+    }
+  ]
+}

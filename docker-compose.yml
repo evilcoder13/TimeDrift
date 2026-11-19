@@ -1,0 +1,72 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: timedrift_web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=file:/app/data/timedrift.db
+      - STORAGE_DIR=/app/storage
+      - STORAGE_AUDIO_DIR=/app/storage/audio
+      - STORAGE_BUNDLES_DIR=/app/storage/bundles
+      - AUTH_SECRET=${AUTH_SECRET:-changeme-production-secret-timedrift}
+      - AUTH_TRUST_HOST=true
+      - AUTH_GOOGLE_ID=${AUTH_GOOGLE_ID:-}
+      - AUTH_GOOGLE_SECRET=${AUTH_GOOGLE_SECRET:-}
+      - ADMIN_EMAILS=${ADMIN_EMAILS:-admin@timedrift.local}
+      - LLM_BASE_URL=${LLM_BASE_URL:-http://10.1.123.123:8000/v1}
+      - LLM_API_KEY=${LLM_API_KEY:-not-needed}
+      - LLM_MODEL=${LLM_MODEL:-Qwen3.5-4B-3D-Coder}
+      - LLM_FALLBACK_MODEL=${LLM_FALLBACK_MODEL:-gemma-4-12b-4bit}
+      - MUSIC_WORKER_URL=http://worker:8100
+      - NEXT_PUBLIC_FREE_MAX_MINUTES=15
+      - NEXT_PUBLIC_PRO_MAX_MINUTES=720
+    volumes:
+      - timedrift_data:/app/data
+      - timedrift_storage:/app/storage
+    depends_on:
+      worker:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+
+  worker:
+    build:
+      context: ./worker/music
+      dockerfile: Dockerfile
+    container_name: timedrift_worker
+    restart: unless-stopped
+    expose:
+      - "8100"
+    environment:
+      - PORT=8100
+      - HOST=0.0.0.0
+      - STORAGE_DIR=/app/storage
+      - MUSICGEN_MODEL_ID=facebook/musicgen-small
+      - USE_PROCEDURAL_DUMMY=${USE_PROCEDURAL_DUMMY:-false}
+    volumes:
+      - timedrift_storage:/app/storage
+      - timedrift_models:/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  timedrift_data:
+    name: timedrift_data
+  timedrift_storage:
+    name: timedrift_storage
+  timedrift_models:
+    name: timedrift_models
