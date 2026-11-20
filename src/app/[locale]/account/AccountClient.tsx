@@ -414,6 +414,26 @@ export function AccountClient({ locale, initialUser }: AccountClientProps) {
           )}
         </div>
       )}
+
+      {/* Footer Links for Compliance & Google OAuth */}
+      <div className="pt-8 border-t border-ink/10 flex flex-wrap items-center justify-between text-xs text-ink-muted">
+        <div>TimeDrift &copy; {new Date().getFullYear()} Sanctuary. All rights reserved.</div>
+        <div className="flex items-center gap-4 mt-2 sm:mt-0 font-mono text-[11px]">
+          <Link
+            href={`/${locale}/privacy`}
+            className="hover:text-accent transition-colors underline underline-offset-4"
+          >
+            {isVi ? "Chính sách Quyền riêng tư" : "Privacy Policy"}
+          </Link>
+          <span>&bull;</span>
+          <Link
+            href={`/${locale}/terms`}
+            className="hover:text-accent transition-colors underline underline-offset-4"
+          >
+            {isVi ? "Điều khoản Sử dụng" : "Terms of Service"}
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
