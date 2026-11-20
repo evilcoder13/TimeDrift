@@ -21,6 +21,7 @@ export async function GET() {
         role: true,
         isPro: true,
         proUntil: true,
+        proTransferCode: true,
         locale: true,
         createdAt: true,
       },

@@ -102,12 +102,11 @@ export const ProUpsellModal: React.FC<ProUpsellModalProps> = ({
           <button
             type="button"
             onClick={() => {
-              // In dev/demo, simulate Pro upgrade activation or forward to account
-              window.location.href = '/account';
+              window.location.href = '/account#upgrade';
             }}
             className="w-full sm:w-auto flex-1 px-5 py-3 rounded-card bg-accent hover:bg-accent-hover text-paper-light dark:text-paper font-medium text-sm transition-colors text-center shadow-sm"
           >
-            {tUpsell('cta_unlock')}
+            {tUpsell('cta_unlock')} — 199.000đ (Lifetime)
           </button>
           <button
             type="button"

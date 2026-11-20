@@ -14,7 +14,7 @@ export default async function AdminLayout({
   const { locale } = await params;
   const session = await getCurrentSession();
 
-  // Role check: If not admin, render gentle unauthorized message
+  // Role check: If not admin, render gentle unauthorized message with Sign In link
   if (!session || session.user?.role !== "ADMIN") {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center p-6 text-center animate-fade-in">
@@ -23,14 +23,22 @@ export default async function AdminLayout({
         </div>
         <h1 className="font-serif text-2xl text-ink font-medium mb-2">Restricted Sanctuary Area</h1>
         <p className="text-sm text-ink-soft max-w-md mb-6 leading-relaxed">
-          The Admin Studio Cockpit requires administrative privileges. Please verify your credentials or sign in with an authorized account.
+          The Admin Studio Cockpit requires administrative privileges. Please sign in with an authorized Google Admin account ({session?.user?.email || "Not signed in"}).
         </p>
-        <Link
-          href={`/${locale}`}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-ink/15 bg-paper-light text-ink hover:border-ink/30 text-sm font-medium transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" /> Return to Sanctuary
-        </Link>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href={`/${locale}/account`}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent text-paper-light hover:bg-accent-hover text-sm font-medium transition-colors shadow-sm"
+          >
+            Sign in with Google
+          </Link>
+          <Link
+            href={`/${locale}`}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-ink/15 bg-paper-light text-ink hover:border-ink/30 text-sm font-medium transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" /> Return to Sanctuary
+          </Link>
+        </div>
       </div>
     );
   }

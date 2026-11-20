@@ -14,21 +14,37 @@ generator client {
 // In SQLite, enums are stored as text (Role: 'USER' | 'ADMIN', GenStatus: 'QUEUED' | 'RUNNING' | 'VALIDATING' | 'READY' | 'FAILED')
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  role          String    @default("USER") // "USER" | "ADMIN"
-  isPro         Boolean   @default(false)
-  proUntil      DateTime?
-  locale        String    @default("en")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  name            String?
+  email           String?   @unique
+  emailVerified   DateTime?
+  image           String?
+  role            String    @default("USER") // "USER" | "ADMIN"
+  isPro           Boolean   @default(false)
+  proUntil        DateTime?
+  proTransferCode String?   @unique
+  locale          String    @default("en")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  accounts  Account[]
-  sessions  Session[]
-  playlists Playlist[]
+  accounts            Account[]
+  sessions            Session[]
+  playlists           Playlist[]
+  paymentTransactions PaymentTransaction[]
+}
+
+model PaymentTransaction {
+  id           String   @id @default(cuid())
+  userId       String
+  transferCode String
+  amount       Int      @default(199000)
+  rawNote      String
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([transferCode])
 }
 
 model Account {

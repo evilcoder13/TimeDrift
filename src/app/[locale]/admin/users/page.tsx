@@ -20,6 +20,7 @@ interface UserItem {
   role: string;
   isPro: boolean;
   proUntil: string | null;
+  proTransferCode?: string | null;
   locale: string;
   createdAt: string;
 }
@@ -113,6 +114,7 @@ export default function UsersManagementPage() {
     return (
       (u.name && u.name.toLowerCase().includes(q)) ||
       (u.email && u.email.toLowerCase().includes(q)) ||
+      (u.proTransferCode && u.proTransferCode.toLowerCase().includes(q)) ||
       u.role.toLowerCase().includes(q)
     );
   });
@@ -127,7 +129,7 @@ export default function UsersManagementPage() {
             <h1 className="font-serif text-2xl font-medium text-ink">User Management & Pro Access</h1>
           </div>
           <p className="text-xs text-ink-soft">
-            Manage membership tiers, grant/revoke Pro Sanctuary status (Rule R9), and administer role access.
+            Manage membership tiers, grant/revoke Pro Sanctuary status (Rule R9), inspect transfer codes, and administer role access.
           </p>
         </div>
       </div>
@@ -147,7 +149,7 @@ export default function UsersManagementPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name, email, or role..."
+            placeholder="Search by name, email, transfer code (TDPRO...), or role..."
             className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-ink-muted"
           />
           {search && (
@@ -166,6 +168,7 @@ export default function UsersManagementPage() {
                 <tr className="border-b border-ink/10 text-ink-muted uppercase tracking-wider font-mono">
                   <th className="py-3 px-4">User</th>
                   <th className="py-3 px-4">Role</th>
+                  <th className="py-3 px-4">Transfer Code</th>
                   <th className="py-3 px-4">Pro Status (R9)</th>
                   <th className="py-3 px-4">Pro Expiration</th>
                   <th className="py-3 px-4">Locale</th>
@@ -194,6 +197,15 @@ export default function UsersManagementPage() {
                         }`}>
                           {u.role}
                         </span>
+                      </td>
+                      <td className="py-3 px-4 font-mono">
+                        {u.proTransferCode ? (
+                          <span className="px-2 py-0.5 rounded bg-ink/5 text-ink font-semibold">
+                            {u.proTransferCode}
+                          </span>
+                        ) : (
+                          <span className="text-ink-muted">—</span>
+                        )}
                       </td>
                       <td className="py-3 px-4 font-mono">
                         {proActive ? (

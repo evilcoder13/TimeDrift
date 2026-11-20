@@ -65,8 +65,8 @@ export default function ScenesListPage() {
   const [deletingScene, setDeletingScene] = useState<SceneItem | null>(null);
   const [deleteConflictRefs, setDeleteConflictRefs] = useState<{ id: string; name: string }[] | null>(null);
 
-  const fetchScenes = async () => {
-    setLoading(true);
+  const fetchScenes = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const [sRes, tRes] = await Promise.all([
         fetch("/api/admin/scenes"),
@@ -81,15 +81,29 @@ export default function ScenesListPage() {
         setAllTags(tData.tags || []);
       }
     } catch {
-      setError("Failed to fetch scenes.");
+      if (!silent) setError("Failed to fetch scenes.");
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchScenes();
   }, []);
+
+  // Auto-refresh every 2.5s whenever any scene is QUEUED, RUNNING, or VALIDATING
+  useEffect(() => {
+    const hasActiveJob = scenes.some((s) =>
+      ["QUEUED", "RUNNING", "VALIDATING"].includes(s.status)
+    );
+    if (!hasActiveJob) return;
+
+    const timer = setInterval(() => {
+      fetchScenes(true);
+    }, 2500);
+
+    return () => clearInterval(timer);
+  }, [scenes]);
 
   const openGenerateModal = () => {
     setFormName("");

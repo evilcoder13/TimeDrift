@@ -23,6 +23,13 @@ services:
       - AUTH_GOOGLE_ID=${AUTH_GOOGLE_ID:-}
       - AUTH_GOOGLE_SECRET=${AUTH_GOOGLE_SECRET:-}
       - ADMIN_EMAILS=${ADMIN_EMAILS:-admin@timedrift.local,evilcoder13@gmail.com}
+      # VietQR & Phone Webhook Pro Activation (Lifetime 199,000 VND)
+      - PAYMENT_BANK_ID=${PAYMENT_BANK_ID:-MB}
+      - PAYMENT_ACCOUNT_NO=${PAYMENT_ACCOUNT_NO:-0000000000}
+      - PAYMENT_ACCOUNT_NAME=${PAYMENT_ACCOUNT_NAME:-TIMEDRIFT SANCTUARY}
+      - PAYMENT_AMOUNT=${PAYMENT_AMOUNT:-199000}
+      - PAYMENT_WEBHOOK_SECRET=${PAYMENT_WEBHOOK_SECRET:-td-webhook-2026-secret}
+      - PAYMENT_STRICT_AMOUNT=${PAYMENT_STRICT_AMOUNT:-false}
       # Connected via Tailscale Mesh to tech42vn (100.100.91.61)
       - LLM_BASE_URL=${LLM_BASE_URL:-http://100.100.91.61:8000/v1}
       - LLM_API_KEY=${LLM_API_KEY:-not-needed}

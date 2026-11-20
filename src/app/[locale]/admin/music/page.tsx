@@ -82,8 +82,8 @@ export default function MusicStudioPage() {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const fetchTracks = async () => {
-    setLoading(true);
+  const fetchTracks = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const [mRes, tRes] = await Promise.all([
         fetch("/api/admin/music"),
@@ -98,15 +98,29 @@ export default function MusicStudioPage() {
         setAllTags(tData.tags || []);
       }
     } catch {
-      setError("Failed to fetch music tracks.");
+      if (!silent) setError("Failed to fetch music tracks.");
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchTracks();
   }, []);
+
+  // Auto-refresh every 2.5s whenever any track is QUEUED, RUNNING, or VALIDATING
+  useEffect(() => {
+    const hasActiveJob = tracks.some((t) =>
+      ["QUEUED", "RUNNING", "VALIDATING"].includes(t.status)
+    );
+    if (!hasActiveJob) return;
+
+    const timer = setInterval(() => {
+      fetchTracks(true);
+    }, 2500);
+
+    return () => clearInterval(timer);
+  }, [tracks]);
 
   const openGenerateModal = () => {
     setRegenTarget(null);

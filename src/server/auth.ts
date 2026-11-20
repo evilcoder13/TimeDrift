@@ -75,21 +75,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
-        const email = user.email;
-        const shouldBeAdmin = isAdminEmail(email);
+        token.email = user.email;
+      }
 
-        // Fetch fresh state from DB
-        const dbUser = user.email
-          ? await prisma.user.findUnique({
-              where: { email: user.email },
-            })
-          : null;
+      const lookupEmail = (user?.email || token.email) as string | undefined;
+      const lookupId = (user?.id || token.id) as string | undefined;
 
-        const role = shouldBeAdmin ? "ADMIN" : dbUser?.role || "USER";
-        token.role = role;
-        token.isPro = dbUser?.isPro ?? false;
-        token.proUntil = dbUser?.proUntil ?? null;
-        token.locale = dbUser?.locale ?? "en";
+      if (lookupEmail || lookupId) {
+        try {
+          const dbUser = lookupId
+            ? await prisma.user.findUnique({ where: { id: lookupId } })
+            : await prisma.user.findUnique({ where: { email: lookupEmail! } });
+
+          if (dbUser) {
+            const shouldBeAdmin = isAdminEmail(dbUser.email);
+            const role = shouldBeAdmin ? "ADMIN" : dbUser.role || "USER";
+            token.id = dbUser.id;
+            token.role = role;
+            token.isPro = dbUser.isPro ?? false;
+            token.proUntil = dbUser.proUntil ?? null;
+            token.locale = dbUser.locale ?? "en";
+          }
+        } catch {
+          // Keep existing token claims if DB lookup fails transiently
+        }
       }
 
       if (trigger === "update" && session) {
@@ -109,7 +118,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
+  trustHost: true,
   pages: {
-    signIn: "/auth/signin",
+    signIn: "/account",
   },
 });
