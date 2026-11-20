@@ -123,19 +123,22 @@ export async function callOmlxChat(
 
   const startTime = Date.now();
   try {
+    const payload = JSON.stringify({
+      model,
+      temperature,
+      max_tokens: maxTokens,
+      stream: false,
+      messages
+    });
+
     const res = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Content-Length': String(Buffer.byteLength(payload)),
         Authorization: `Bearer ${process.env.LLM_API_KEY || 'not-needed'}`
       },
-      body: JSON.stringify({
-        model,
-        temperature,
-        max_tokens: maxTokens,
-        stream: false,
-        messages
-      }),
+      body: payload,
       signal: controller.signal
     });
 

@@ -44,7 +44,13 @@ export async function GET(
       }
     }
 
-    return NextResponse.json({ scene, sourceCode });
+    // Fetch latest genJob to provide error log if failed
+    const latestJob = await prisma.genJob.findFirst({
+      where: { kind: "scene", targetId: id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json({ scene, sourceCode, latestJob });
   } catch (err: unknown) {
     const error = err as { statusCode?: number; code?: string; message?: string };
     return NextResponse.json(

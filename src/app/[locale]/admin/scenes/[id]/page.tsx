@@ -82,6 +82,8 @@ export default function SceneStudioDetailPage() {
   const [sandboxReady, setSandboxReady] = useState(false);
   const [sandboxError, setSandboxError] = useState<string | null>(null);
 
+  const [latestJob, setLatestJob] = useState<{ id: string; status: string; log: string | null } | null>(null);
+
   const fetchScene = async (silent = false) => {
     if (!silent) setLoading(true);
     try {
@@ -94,6 +96,9 @@ export default function SceneStudioDetailPage() {
         const data = await sRes.json();
         setScene(data.scene);
         setSourceCode(data.sourceCode || "");
+        if (data.latestJob) {
+          setLatestJob(data.latestJob);
+        }
         if (data.scene.status === "READY") {
           setValidation({
             stage1: { passed: true, message: "Security scan passed" },
@@ -296,6 +301,22 @@ export default function SceneStudioDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Failed Scene Reason Banner */}
+      {scene?.status === "FAILED" && (
+        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/25 flex flex-col gap-2">
+          <div className="flex items-center gap-2 text-rose-500 font-semibold text-sm">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
+            <span>Scene Generation / Validation Failed</span>
+          </div>
+          <div className="text-xs text-rose-600 dark:text-rose-400 font-mono bg-rose-500/5 p-3 rounded-lg border border-rose-500/10 whitespace-pre-wrap break-all">
+            {latestJob?.log || "Unknown generation or validation failure. Click 'Edit & Rebuild with LLM' to try again."}
+          </div>
+          <div className="text-xs text-ink-soft">
+            You can modify the prompt or model, or edit the source code manually on the left and click <strong>Validate & Save</strong> or <strong>Edit & Rebuild with LLM</strong> above.
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-mono flex items-center justify-between">
