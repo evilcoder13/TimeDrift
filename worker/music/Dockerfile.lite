@@ -1,0 +1,48 @@
+# ==============================================================================
+# TimeDrift Music Worker Lite Dockerfile (Procedural Ambient Synth Mode)
+# Lightweight ~250MB image for 2GB RAM VPS nodes without heavy PyTorch wheels
+# ==============================================================================
+
+FROM python:3.11-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PORT=8100 \
+    HOST=0.0.0.0 \
+    USE_PROCEDURAL_DUMMY=true \
+    STORAGE_DIR=/app/storage
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    libsndfile1 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN groupadd -g 1001 worker && \
+    useradd -u 1001 -g worker -m -d /home/worker -s /bin/bash worker
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir \
+    "fastapi>=0.110.0" \
+    "uvicorn>=0.28.0" \
+    "pydantic>=2.0.0" \
+    "numpy>=1.24.0" \
+    "scipy>=1.10.0" \
+    "soundfile>=0.12.1" \
+    "pyloudnorm>=0.1.1"
+
+RUN mkdir -p /app/storage/audio /models && \
+    chown -R worker:worker /app /models /home/worker
+
+COPY . /app
+
+USER worker
+
+EXPOSE 8100
+
+HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:8100/health || exit 1
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8100", "--workers", "1"]

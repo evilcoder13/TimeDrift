@@ -74,6 +74,9 @@ export async function POST(req: Request) {
       },
     });
 
+    const { jobRunner } = await import("@/server/jobs/runner");
+    jobRunner.start();
+
     return NextResponse.json({ scene, jobId: job.id }, { status: 201 });
   } catch (err: unknown) {
     const error = err as { statusCode?: number; code?: string; message?: string };

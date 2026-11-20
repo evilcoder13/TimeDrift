@@ -13,9 +13,14 @@ export async function GET(
       return new NextResponse("Forbidden", { status: 403 });
     }
 
-    const filePath = path.resolve(process.cwd(), "storage/scenes", file);
+    let filePath = path.resolve(process.cwd(), "storage/scenes", file);
     if (!fs.existsSync(filePath)) {
-      return new NextResponse("Not Found", { status: 404 });
+      const altPath = path.resolve(process.cwd(), "storage/bundles", file);
+      if (fs.existsSync(altPath)) {
+        filePath = altPath;
+      } else {
+        return new NextResponse("Not Found", { status: 404 });
+      }
     }
 
     const data = fs.readFileSync(filePath, "utf-8");

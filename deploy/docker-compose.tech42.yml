@@ -1,0 +1,27 @@
+services:
+  worker:
+    build:
+      context: ../worker/music
+      dockerfile: Dockerfile.lite
+    image: timedrift-music-lite:latest
+    container_name: timedrift_worker
+    restart: unless-stopped
+    ports:
+      - "8100:8100"
+    environment:
+      - PORT=8100
+      - HOST=0.0.0.0
+      - STORAGE_DIR=/app/storage
+      - USE_PROCEDURAL_DUMMY=${USE_PROCEDURAL_DUMMY:-true}
+    volumes:
+      - timedrift_storage:/app/storage
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  timedrift_storage:
+    name: timedrift_storage

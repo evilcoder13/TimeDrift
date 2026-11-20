@@ -3,6 +3,7 @@ import path from "node:path";
 import { prisma } from "../db";
 import { musicClient } from "../services/music-client";
 import { sceneValidator } from "../services/scene-validator";
+import { generateSceneWithRetries } from "../services/scene-generator";
 
 export interface JobProgressEvent {
   jobId: string;
@@ -257,10 +258,90 @@ export class JobRunner extends EventEmitter {
     try {
       const scene = await prisma.scene.findUnique({
         where: { id: job.targetId },
+        include: { tags: true },
       });
 
       if (!scene) {
         throw new Error(`Target Scene ID ${job.targetId} not found.`);
+      }
+
+      const bundlePath = path.resolve(process.cwd(), "storage/bundles", `${scene.id}.js`);
+      const sourcePath = path.resolve(process.cwd(), "storage/scenes", `${scene.id}.ts`);
+
+      // Check if sourcePath exists or scene prompt is already raw TypeScript code
+      let sourceCode = "";
+      if (scene.sourcePath) {
+        try {
+          const fs = await import("node:fs/promises");
+          sourceCode = await fs.readFile(path.resolve(process.cwd(), scene.sourcePath), "utf-8");
+        } catch {
+          sourceCode = "";
+        }
+      }
+
+      const looksLikeCode =
+        sourceCode.includes("export default") ||
+        scene.prompt.includes("export default function mount");
+
+      if (!sourceCode && !looksLikeCode) {
+        // Call LLM via generateSceneWithRetries
+        const genResult = await generateSceneWithRetries(
+          {
+            name: scene.name,
+            description: scene.description,
+            tags: scene.tags.map((t) => t.slug),
+            prompt: scene.prompt,
+          },
+          async (candidateCode) => {
+            await prisma.genJob.update({
+              where: { id: job.id },
+              data: { status: "VALIDATING", log: "Validating generated TypeScript scene..." },
+            });
+            await prisma.scene.update({
+              where: { id: scene.id },
+              data: { status: "VALIDATING" },
+            });
+            const res = await sceneValidator.validateScene(candidateCode, {
+              sceneId: scene.id,
+              saveBundlePath: bundlePath,
+              saveSourcePath: sourcePath,
+            });
+            if (res.valid) return { ok: true };
+            return { ok: false, stage: `Stage ${res.stage}`, error: res.error || "Validation failed" };
+          }
+        );
+
+        await prisma.scene.update({
+          where: { id: scene.id },
+          data: {
+            status: "READY",
+            model: genResult.model,
+            bundlePath: `storage/bundles/${scene.id}.js`,
+            sourcePath: `storage/scenes/${scene.id}.ts`,
+          },
+        });
+
+        await prisma.genJob.update({
+          where: { id: job.id },
+          data: {
+            status: "READY",
+            attempts: genResult.attempts,
+            model: genResult.model,
+            log: `Generated & validated in ${genResult.attempts} attempt(s) using ${genResult.model}.`,
+          },
+        });
+
+        this.emitStatus({
+          jobId: job.id,
+          kind: "scene",
+          targetId: job.targetId,
+          status: "READY",
+        });
+        return;
+      }
+
+      if (!sourceCode) {
+        sourceCode = scene.prompt;
       }
 
       // Transition to VALIDATING
@@ -279,23 +360,6 @@ export class JobRunner extends EventEmitter {
         targetId: job.targetId,
         status: "VALIDATING",
       });
-
-      // Check if sourcePath exists or scene prompt exists
-      let sourceCode = "";
-      if (scene.sourcePath) {
-        try {
-          const fs = await import("node:fs/promises");
-          sourceCode = await fs.readFile(path.resolve(process.cwd(), scene.sourcePath), "utf-8");
-        } catch {
-          // If file not on disk, prompt might have source
-          sourceCode = scene.prompt;
-        }
-      } else {
-        sourceCode = scene.prompt;
-      }
-
-      const bundlePath = path.resolve(process.cwd(), "storage/bundles", `${scene.id}.js`);
-      const sourcePath = path.resolve(process.cwd(), "storage/scenes", `${scene.id}.ts`);
 
       const valResult = await sceneValidator.validateScene(sourceCode, {
         sceneId: scene.id,

@@ -108,6 +108,29 @@ export class MusicClient {
       }
 
       const result = (await res.json()) as MusicWorkerGenerateResponse;
+
+      // If music worker runs on a remote VPS (no shared storage), download the generated .ogg
+      const existsLocally = await fs
+        .access(outPath)
+        .then(() => true)
+        .catch(() => false);
+
+      if (!existsLocally) {
+        const filename = path.basename(outPath);
+        const dlRes = await fetch(`${this.baseUrl}/download/${encodeURIComponent(filename)}`, {
+          signal: controller.signal,
+        });
+        if (!dlRes.ok) {
+          throw new ApiError(
+            502,
+            "GENERATION_FAILED",
+            `Failed to download generated audio from remote worker (${dlRes.status})`
+          );
+        }
+        const buf = Buffer.from(await dlRes.arrayBuffer());
+        await fs.writeFile(outPath, buf);
+      }
+
       return result;
     } catch (err: any) {
       if (err instanceof ApiError) throw err;

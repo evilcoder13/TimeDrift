@@ -21,8 +21,10 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-# Install dependencies with C++ optimizations for CPU
-RUN CMAKE_ARGS="-DGGML_NATIVE=OFF" pip install --no-cache-dir -r requirements.txt
+# Install dependencies with prebuilt CPU wheel fallback or C++ compilation
+RUN CMAKE_ARGS="-DGGML_NATIVE=OFF" pip install --no-cache-dir \
+    --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu \
+    -r requirements.txt
 
 # Create models volume directory
 RUN mkdir -p /app /models

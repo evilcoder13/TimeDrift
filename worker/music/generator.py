@@ -1,7 +1,11 @@
 import os
 import logging
 import numpy as np
-import torch
+
+try:
+    import torch
+except ImportError:
+    torch = None  # type: ignore
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +24,8 @@ def load_model():
     if _model is not None:
         return _model, _processor
 
-    if os.getenv("USE_PROCEDURAL_DUMMY", "").lower() in ("1", "true", "yes"):
-        logger.info("USE_PROCEDURAL_DUMMY set. Initializing procedural fallback generator.")
+    if os.getenv("USE_PROCEDURAL_DUMMY", "").lower() in ("1", "true", "yes") or torch is None:
+        logger.info("USE_PROCEDURAL_DUMMY set (or torch not installed). Initializing procedural ambient generator.")
         _is_dummy = True
         _model = "dummy"
         _processor = None

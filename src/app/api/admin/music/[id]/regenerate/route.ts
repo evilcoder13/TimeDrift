@@ -46,6 +46,9 @@ export async function POST(
       },
     });
 
+    const { jobRunner } = await import("@/server/jobs/runner");
+    jobRunner.start();
+
     return NextResponse.json({ music: updated, jobId: job.id });
   } catch (err: unknown) {
     const error = err as { statusCode?: number; code?: string; message?: string };

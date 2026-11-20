@@ -61,7 +61,7 @@ export const PlayerClient: React.FC<PlayerClientProps> = ({
     : null;
 
   const bundleUrl = scene.bundlePath
-    ? `/media/scenes/${scene.bundlePath.replace(/^storage\/scenes\//, '')}`
+    ? `/media/scenes/${scene.bundlePath.replace(/^storage\/(scenes|bundles)\//, '')}`
     : undefined;
 
   // Handle timer completion (Rule R2: 10.0s logarithmic audio fade and scene pause)

@@ -1,0 +1,57 @@
+services:
+  llm:
+    build:
+      context: ../worker/llm
+      dockerfile: Dockerfile
+    image: timedrift-llm:latest
+    container_name: timedrift_llm
+    restart: unless-stopped
+    ports:
+      - "100.100.91.61:8000:8000"
+      - "127.0.0.1:8000:8000"
+    environment:
+      - PORT=8000
+      - HOST=0.0.0.0
+      - MODELS_DIR=/models
+      - MODEL_REPO=Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF
+      - MODEL_FILENAME=qwen2.5-coder-1.5b-instruct-q4_k_m.gguf
+      - N_CTX=4096
+      - N_THREADS=2
+    volumes:
+      - timedrift_models:/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  worker:
+    build:
+      context: ../worker/music
+      dockerfile: Dockerfile.lite
+    image: timedrift-music-lite:latest
+    container_name: timedrift_worker
+    restart: unless-stopped
+    ports:
+      - "100.100.91.61:8100:8100"
+      - "127.0.0.1:8100:8100"
+    environment:
+      - PORT=8100
+      - HOST=0.0.0.0
+      - STORAGE_DIR=/app/storage
+      - USE_PROCEDURAL_DUMMY=true
+    volumes:
+      - timedrift_storage:/app/storage
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  timedrift_models:
+    name: timedrift_models
+  timedrift_storage:
+    name: timedrift_storage
