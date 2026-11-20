@@ -27,8 +27,8 @@ A relax web app: animated line-art scenes + looping AI music, played on a timer.
 
 ## Stack (fixed)
 - Next.js 15 App Router, TypeScript strict, Tailwind, Prisma + SQLite, Auth.js, next-intl, zod.
-- Python 3.11 FastAPI worker in `worker/music/` (transformers MusicGen-small, CPU torch).
-- LLM: omlx, OpenAI-compatible, `LLM_BASE_URL=http://10.1.123.123:8000/v1`. Default `LLM_MODEL=Qwen3.5-4B-3D-Coder`, fallback `LLM_FALLBACK_MODEL=gemma-4-12b-4bit`. **Use the smallest model that passes validation.**
+- Python 3.11 FastAPI worker in `worker/music/` (transformers MusicGen-small, CPU torch on `:8100`).
+- LLM: Local worker in `worker/llm/` (llama-cpp-python running GGUF on `:8000`), or OpenAI-compatible server (omlx). Configured via `LLM_BASE_URL`.
 - Scene library: `vendor/line-art-animation/` (MIT, from github.com/JDhruv14/line-art-animation). Do not modify it. Wrap it instead.
 
 ## Planned layout
@@ -41,7 +41,8 @@ src/lib/                 # shared utils, zod schemas
 prisma/schema.prisma
 messages/en.json, vi.json
 public/scene-host.html   # sandboxed scene runtime
-worker/music/            # Python MusicGen service
+worker/music/            # Python MusicGen service (:8100)
+worker/llm/              # Python llama.cpp local LLM service (:8000)
 vendor/line-art-animation/
 seed/                    # seed scenes (TS), tags, prompts
 storage/                 # generated audio + bundles (gitignored)

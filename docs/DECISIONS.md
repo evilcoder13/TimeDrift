@@ -35,3 +35,12 @@ Format: Context → Decision → Consequences. Add new ADRs at the bottom and ne
 
 ## ADR-008 Fixed shared tag list — Accepted
 - Decision: admins manage a fixed tag list with EN/VI names. Both music and scenes use it. It drives Jaccard-based template matching.
+
+## ADR-009 Standalone Lightweight Local LLM Worker (llama.cpp) — Accepted
+- Context: initially ADR-004 relied on an external LAN server running `omlx` at `http://10.1.123.123:8000/v1`. To allow fully autonomous, offline development and deployment without external hardware or heavy Docker runtimes like Ollama, a self-contained local LLM solution is required.
+- Decision: introduce `worker/llm/` as an independent microservice mirroring `worker/music/`. It runs Python FastAPI with `llama-cpp-python` compiling llama.cpp C++ routines, hosting lightweight 4-bit quantized GGUF models (such as `Qwen2.5-Coder-1.5B-Instruct-GGUF` or `3B`). It exposes standard OpenAI-compatible endpoints (`/v1/chat/completions`, `/v1/models`, `/health`) on port `8000`.
+- Consequences:
+  1. The entire stack can run completely offline on local CPU / Apple Silicon using under 1.5 GB RAM.
+  2. The service can run either directly from the terminal via `./worker/llm/run.sh` or inside Docker via `docker-compose.local-ai.yml`.
+  3. Configurable via `LLM_BASE_URL` with backward compatibility for remote omlx servers when desired.
+

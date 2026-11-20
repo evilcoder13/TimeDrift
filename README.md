@@ -51,8 +51,8 @@
                │                         │
                ▼                         ▼
 ┌─────────────────────────────┐   ┌─────────────────────────────┐
-│  Python MusicGen Worker     │   │     Local omlx LLM Server   │
-│  (:8100 FastAPI / CPU torch)│   │ (:8000 / Qwen3.5-4B-3D-Coder│
+│  Python MusicGen Worker     │   │  Local LLM Worker (llama.cpp)│
+│  (:8100 FastAPI / CPU torch)│   │  (:8000 / Qwen2.5-Coder GGUF│
 └─────────────────────────────┘   └─────────────────────────────┘
 ```
 
@@ -62,11 +62,11 @@
 
 ### Prerequisites
 - **Node.js**: $\ge 22.18$
-- **Python**: $\ge 3.11$ (for local MusicGen worker)
+- **Python**: $\ge 3.11$ (for local MusicGen and LLM workers)
 - **SQLite3**: $\ge 3.40$
 - **ffmpeg** (for audio processing)
 
-### Installation
+### Option A: Local Development from Terminal (No Docker required)
 
 1. **Clone the repository:**
    ```bash
@@ -74,27 +74,40 @@
    cd TimeDrift
    ```
 
-2. **Install Node dependencies:**
+2. **Install Node dependencies & setup database:**
    ```bash
-   npm install
-   ```
-
-3. **Configure Environment:**
-   ```bash
+   npm install && npx playwright install chromium
    cp .env.example .env
-   ```
-
-4. **Initialize Database & Seed Content:**
-   ```bash
    npx prisma migrate dev --name init
    npm run seed
    ```
 
-5. **Start Development Server:**
+3. **Start the background AI workers:**
+   - **Terminal 1 (MusicGen Worker on :8100):**
+     ```bash
+     cd worker/music && ./run.sh
+     ```
+   - **Terminal 2 (Lightweight llama.cpp LLM Worker on :8000):**
+     ```bash
+     cd worker/llm && ./run.sh
+     ```
+
+4. **Start Web Application (port 3000):**
    ```bash
    npm run dev
    ```
    Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+### Option B: Fully Offline Local AI Stack via Docker
+
+Run the entire suite (Next.js Web + Python MusicGen Worker + Local llama.cpp LLM Worker) inside an isolated Docker network:
+
+```bash
+docker compose -f docker-compose.local-ai.yml up -d
+```
+All three components run locally on your machine with persistent storage volumes and zero external network calls.
 
 ---
 
@@ -118,28 +131,19 @@ npm run e2e
 
 ---
 
-## 🐳 Docker Deployment
-
-Run the complete production stack (Next.js Standalone + Python MusicGen Worker + Persistent Volumes):
-
-```bash
-docker compose up -d
-```
-
----
-
 ## 🙏 Acknowledgements & Credits
 
 TimeDrift is built upon the wonderful work of the open-source community:
 
 - **[line-art-animation](https://github.com/JDhruv14/line-art-animation)** by [@JDhruv14](https://github.com/JDhruv14): The elegant mathematical foundations for SVG stroke kinematics, minimum-jerk curves, and organic gait simulation that power TimeDrift's visual soul.
+- **[llama.cpp](https://github.com/ggerganov/llama.cpp)** & **[llama-cpp-python](https://github.com/abetlen/llama-cpp-python)**: Blazing-fast, ultra-low-memory local LLM inference on CPU and Apple Silicon.
+- **[Qwen2.5-Coder](https://github.com/QwenLM/Qwen2.5-Coder)** by Alibaba Cloud: High-precision compact coding LLM for procedural line-art scene code synthesis.
 - **[Meta AI MusicGen](https://github.com/facebookresearch/audiocraft)** (`facebook/musicgen-small`): For state-of-the-art controllable acoustic generation on CPU.
 - **[Next.js](https://nextjs.org/)** by Vercel: The React Framework for the Web.
 - **[Tailwind CSS](https://tailwindcss.com/)**: For the utility-first CSS styling engine.
 - **[Prisma](https://www.prisma.io/)**: Next-generation Node.js and TypeScript ORM for SQLite.
 - **[Auth.js](https://authjs.dev/)** (NextAuth.js): Flexible authentication for the modern web.
 - **[next-intl](https://next-intl-docs.vercel.app/)**: Thoughtful internationalization for Next.js App Router.
-- **[omlx](https://github.com/omlx-ai)**: Fast local inference engine for OpenAI-compatible LLM scene coding.
 - **[pyloudnorm](https://github.com/csteinmetz1/pyloudnorm)**: Precise ITU-R BS.1770-4 audio loudness normalization.
 - **[Fraunces Font](https://github.com/undercasetype/Fraunces)** & **[Inter Font](https://github.com/rsms/inter)**: Typography that brings warmth, character, and flawless Vietnamese diacritics.
 

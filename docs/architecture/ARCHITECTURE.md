@@ -6,11 +6,11 @@
 | Web app | Next.js 15 (App Router, RSC) | User + admin UI, API routes, auth |
 | Domain layer | `src/server/*` | Rules R1–R12, matching, playlist validation |
 | DB | SQLite + Prisma | Metadata, users, jobs |
-| Storage | Local disk `storage/` | `audio/<id>.ogg`, `scenes/<id>/{source.ts,bundle.js}` |
-| Music worker | Python FastAPI :8100 | MusicGen-small CPU, loop crossfade, encode |
-| LLM | omlx `LLM_BASE_URL` | Writes scene source |
+| Storage | Local disk `storage/` | `audio/<id>.ogg`, `scenes/<id>.bundle.js` |
+| Music worker | Python FastAPI :8100 (`worker/music/`) | MusicGen-small CPU, loop crossfade, encode |
+| LLM | Local llama.cpp worker (`worker/llm/`) or omlx on :8000 | Writes scene source using compact GGUF/omlx models |
 | Scene validator | `tsc`, `esbuild`, Playwright-chromium | Typecheck, bundle, render check |
-| Job runner | In-process queue (`src/server/jobs.ts`), DB-backed | Runs one music job and one scene job at a time, and resumes jobs after a restart |
+| Job runner | DB-backed serial runner (`src/server/jobs/runner.ts`) | Runs one music job and one scene job at a time, and resumes jobs after a restart |
 | Scene host | `public/scene-host.html` | Runs bundles in a sandbox |
 
 ## Scene generation sequence

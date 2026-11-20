@@ -1,14 +1,13 @@
 # Setup & Environment (Owner: DevOps)
 
 ## Prerequisites
-- Node ≥ 22.18 (required by line-art-animation), npm
-- Python 3.11, ffmpeg (for ogg encode), ~4 GB free RAM for MusicGen-small CPU
-- Chromium (Playwright installs it) for scene validation
-- Network access to omlx: `curl http://10.1.123.123:8000/v1/models`
+- Node ≥ 22.18, npm
+- Python 3.11, ffmpeg (for ogg encode), ~4 GB free RAM
+- Chromium (installed via `npx playwright install chromium`) for headless scene validation
+- Local LLM Worker: `worker/llm/` (llama.cpp GGUF, ~1 GB RAM) or network access to an OpenAI-compatible server (e.g. omlx)
 
-### Available omlx models (checked 2026-11-12)
-`Qwen3.5-4B-3D-Coder` (default scene model), `Qwen3.5-4B-MLX-4bit`, `gemma-3-4b-it-qat-4bit`, `gemma-4-12b-4bit` (fallback), `Jev-Style-Qwen3.5-2B-Decision-MLX-bf16`, `DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` (do not use).
-Task ML-1 benchmarks the 4B options on 5 seed prompts and confirms the default.
+### Local LLM Engine (`worker/llm/`)
+TimeDrift includes an embedded, lightweight LLM server in `worker/llm/` powered by `llama-cpp-python`. It downloads and executes `Qwen2.5-Coder-1.5B-Instruct-GGUF` (or `3B`) on CPU, listening on port `8000`. You can also point to external omlx servers via `LLM_BASE_URL`.
 
 ## .env.example
 ```
@@ -19,21 +18,34 @@ AUTH_GOOGLE_ID=""
 AUTH_GOOGLE_SECRET=""
 EMAIL_SERVER="smtp://user:pass@smtp.example.com:587"
 EMAIL_FROM="TimeDrift <no-reply@example.com>"
-LLM_BASE_URL="http://10.1.123.123:8000/v1"
+LLM_BASE_URL="http://127.0.0.1:8000/v1"
 LLM_API_KEY="not-needed"
-LLM_MODEL="Qwen3.5-4B-3D-Coder"
-LLM_FALLBACK_MODEL="gemma-4-12b-4bit"
+LLM_MODEL="default"
+LLM_FALLBACK_MODEL="default"
 MUSIC_WORKER_URL="http://127.0.0.1:8100"
 ADMIN_EMAILS="you@example.com"   # promoted to ADMIN on first login
 ```
 
-## Run (after scaffolding)
-```
-npm i && npx playwright install chromium
+## Running Locally (Terminal)
+```bash
+# 1. Install dependencies & initialize database
+npm install && npx playwright install chromium
 npx prisma migrate dev && npm run seed
-cd worker/music && python -m venv .venv && . .venv/bin/activate \
-  && pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu && ./run.sh
+
+# 2. Start MusicGen Worker (port 8100)
+cd worker/music && ./run.sh
+
+# 3. Start Lightweight LLM Worker (port 8000)
+cd worker/llm && ./run.sh
+
+# 4. Start Web Application (port 3000)
 npm run dev
+```
+
+## Running with Docker (Fully Offline Local AI Stack)
+```bash
+# Run web + music worker + local llama.cpp worker in a private docker network:
+docker compose -f docker-compose.local-ai.yml up -d
 ```
 
 ## Ops

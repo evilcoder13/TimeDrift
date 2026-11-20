@@ -1,10 +1,10 @@
 # TimeDrift — Implementation Plan (MVP)
 
-> Status: **Documentation & preparation stage**. No coding yet. See [BACKLOG.md](BACKLOG.md) for the tasks assigned to each role.
+> Status: **Production Ready (v1.0.0 released)**. All phases P0 through P4 complete. See [BACKLOG.md](BACKLOG.md) and [release/RELEASE_V1_0_0.md](release/RELEASE_V1_0_0.md).
 
 ## 1. Goal
 TimeDrift is a web app (a Next.js PWA in English and Vietnamese). Anyone can open it and relax: they watch an animated line-art scene while relaxing music loops, for a fixed time.
-- **Admin** creates music with a local AI model (MusicGen-small on CPU). Admin creates scenes with an LLM served by omlx, which writes code using the `line-art-animation` library. Admin pairs music and scenes into **templates**, matched by feeling tags.
+- **Admin** creates music with a local AI model (MusicGen-small on CPU). Admin creates scenes with an LLM served locally (via `worker/llm/` llama.cpp or external omlx), which writes code using the `line-art-animation` library. Admin pairs music and scenes into **templates**, matched by feeling tags.
 - **Guest/free users** play templates or a random pair. Each run lasts 3–15 min (default 15). When it ends the player stops, and the user can start again right away. There is no daily cap.
 - **Pro users** can set runs up to 720 min, choose any music and scene (custom pair), and build playlists.
 
@@ -13,8 +13,8 @@ TimeDrift is a web app (a Next.js PWA in English and Vietnamese). Anyone can ope
 |---|---|---|
 | Platform | Next.js 15 (App Router), TypeScript, Tailwind, installable PWA | ADR-001 |
 | DB | SQLite via Prisma, on a single server | ADR-002 |
-| Music gen | `facebook/musicgen-small`, CPU, Python FastAPI worker. Makes seamless 30–60s loops | ADR-003 |
-| Scene gen | omlx at `http://10.1.123.123:8000/v1` (OpenAI-compatible). Default model `Qwen3.5-4B-3D-Coder`, fallback `gemma-4-12b-4bit` | ADR-004 |
+| Music gen | `facebook/musicgen-small`, CPU, Python FastAPI worker (`worker/music/`). Makes seamless 30–60s loops | ADR-003 |
+| Scene gen | Local llama.cpp worker (`worker/llm/` Qwen2.5-Coder GGUF) or omlx (`http://localhost:8000/v1`), OpenAI-compatible. | ADR-004, ADR-009 |
 | Scene delivery | Live SVG/TS bundle in an `<iframe sandbox="allow-scripts">` | ADR-005 |
 | Auth | Guests need no login. Pro needs login (Auth.js: email magic link + Google) | ADR-006 |
 | Payment | Mock for now: admin switches Pro on/off. A `PaymentProvider` interface is ready for VNPay/MoMo later | ADR-007 |
@@ -28,9 +28,9 @@ flowchart LR
   U[Browser: Player / Admin UI] --> N[Next.js app + API routes]
   N --> DB[(SQLite via Prisma)]
   N --> FS[/storage: audio .ogg, scene bundles .js/]
-  N -- HTTP job --> W[Python FastAPI: MusicGen-small CPU]
+  N -- HTTP job --> W[Python FastAPI: MusicGen-small CPU on :8100]
   W --> FS
-  N -- OpenAI-compatible API --> O[omlx LLM server]
+  N -- OpenAI-compatible API --> L[Local LLM Worker: llama.cpp on :8000]
   N --> V[tsc + esbuild + headless render check]
   U -- sandboxed iframe --> FS
 ```
