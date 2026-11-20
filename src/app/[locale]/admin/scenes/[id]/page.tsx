@@ -56,6 +56,19 @@ export default function SceneStudioDetailPage() {
   const [rebuilding, setRebuilding] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Edit / Rebuild with LLM Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editPrompt, setEditPrompt] = useState("");
+  const [editModel, setEditModel] = useState("default");
+  const [availableModels, setAvailableModels] = useState<Array<{ id: string; name: string }>>([
+    { id: "default", name: "Qwen2.5-Coder-1.5B (Default Lightweight)" },
+  ]);
+  const [allTags, setAllTags] = useState<{ id: string; slug: string; nameEn: string }[]>([]);
+  const [editSelectedTags, setEditSelectedTags] = useState<string[]>([]);
+  const [submittingRegen, setSubmittingRegen] = useState(false);
+
   // Validation report card
   const [validation, setValidation] = useState<ValidationResult | null>(null);
 
@@ -69,12 +82,16 @@ export default function SceneStudioDetailPage() {
   const [sandboxReady, setSandboxReady] = useState(false);
   const [sandboxError, setSandboxError] = useState<string | null>(null);
 
-  const fetchScene = async () => {
-    setLoading(true);
+  const fetchScene = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
-      const res = await fetch(`/api/admin/scenes/${id}`);
-      if (res.ok) {
-        const data = await res.json();
+      const [sRes, mRes, tRes] = await Promise.all([
+        fetch(`/api/admin/scenes/${id}`),
+        fetch("/api/admin/models"),
+        fetch("/api/admin/tags"),
+      ]);
+      if (sRes.ok) {
+        const data = await sRes.json();
         setScene(data.scene);
         setSourceCode(data.sourceCode || "");
         if (data.scene.status === "READY") {
@@ -86,18 +103,81 @@ export default function SceneStudioDetailPage() {
           });
         }
       } else {
-        setError("Failed to load scene details");
+        if (!silent) setError("Failed to load scene details");
+      }
+      if (mRes.ok) {
+        const mData = await mRes.json();
+        if (Array.isArray(mData.models) && mData.models.length > 0) {
+          setAvailableModels(mData.models);
+        }
+      }
+      if (tRes.ok) {
+        const tData = await tRes.json();
+        if (Array.isArray(tData.tags)) {
+          setAllTags(tData.tags);
+        }
       }
     } catch {
-      setError("Error connecting to server");
+      if (!silent) setError("Error connecting to server");
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchScene();
   }, [id]);
+
+  // Auto-refresh every 2.5s if scene is QUEUED, RUNNING, or VALIDATING
+  useEffect(() => {
+    if (!scene || !["QUEUED", "RUNNING", "VALIDATING"].includes(scene.status)) return;
+    const timer = setInterval(() => {
+      fetchScene(true);
+    }, 2500);
+    return () => clearInterval(timer);
+  }, [scene?.status]);
+
+  const openEditModal = () => {
+    if (!scene) return;
+    setEditName(scene.name);
+    setEditDescription(scene.description);
+    setEditPrompt(scene.prompt);
+    setEditModel(scene.model || availableModels[0]?.id || "default");
+    setEditSelectedTags(scene.tags.map((t) => t.id));
+    setIsEditModalOpen(true);
+  };
+
+  const handleRebuildFromModal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmittingRegen(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`/api/admin/scenes/${id}/regenerate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: editName,
+          description: editDescription,
+          prompt: editPrompt,
+          model: editModel,
+          tagIds: editSelectedTags,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        setError(err.error?.message || "Failed to rebuild scene.");
+      } else {
+        setIsEditModalOpen(false);
+        fetchScene();
+      }
+    } catch {
+      setError("Error connecting to server.");
+    } finally {
+      setSubmittingRegen(false);
+    }
+  };
 
   const handleSaveAndRebuild = async () => {
     setRebuilding(true);
@@ -193,6 +273,14 @@ export default function SceneStudioDetailPage() {
 
         {scene && (
           <div className="flex items-center gap-2">
+            <button
+              onClick={openEditModal}
+              className="px-3.5 py-2 rounded-xl text-xs font-medium border border-ink/15 hover:border-ink/30 bg-paper-light text-ink flex items-center gap-1.5 transition-colors shadow-sm"
+              title="Edit scene parameters, prompt, and rebuild with LLM"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-accent" />
+              <span>Edit & Rebuild with LLM</span>
+            </button>
             <button
               onClick={togglePublish}
               disabled={scene.status !== "READY"}
@@ -431,6 +519,133 @@ export default function SceneStudioDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Edit Parameters & Rebuild with LLM Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-50 bg-ink/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-paper border border-ink/15 shadow-2xl rounded-2xl w-full max-w-lg p-6 animate-fade-in text-xs space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-ink/10">
+              <h3 className="font-serif text-lg font-medium text-ink">
+                Edit & Rebuild Scene: {scene?.name}
+              </h3>
+              <button onClick={() => setIsEditModalOpen(false)} className="text-ink-muted hover:text-ink">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleRebuildFromModal} className="space-y-4">
+              <div>
+                <label className="block font-medium text-ink mb-1">Scene Name</label>
+                <input
+                  type="text"
+                  required
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  placeholder="e.g. Deep Night Fireflies"
+                  className="w-full px-3 py-2 rounded-xl border border-ink/15 bg-paper-light text-ink focus:border-accent outline-none font-mono text-[11px]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-medium text-ink mb-1">Description</label>
+                <input
+                  type="text"
+                  required
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  placeholder="e.g. Fireflies floating slowly in deep night"
+                  className="w-full px-3 py-2 rounded-xl border border-ink/15 bg-paper-light text-ink focus:border-accent outline-none font-mono text-[11px]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-medium text-ink mb-1">Model Selection (TimeDrift LLM)</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {availableModels.map((m) => (
+                    <label
+                      key={m.id}
+                      className={`flex items-center gap-2 p-2.5 rounded-xl border cursor-pointer font-mono text-[11px] transition-colors ${
+                        editModel === m.id
+                          ? "border-accent bg-accent/10 text-ink"
+                          : "border-ink/15 bg-paper text-ink-muted hover:text-ink"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="editModel"
+                        value={m.id}
+                        checked={editModel === m.id}
+                        onChange={(e) => setEditModel(e.target.value)}
+                        className="accent-accent"
+                      />
+                      <span className="truncate">{m.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-medium text-ink mb-1">Emotion Tags</label>
+                <div className="flex flex-wrap gap-1.5 p-2 rounded-xl border border-ink/10 bg-paper-light max-h-24 overflow-y-auto">
+                  {allTags.map((tag) => {
+                    const isSelected = editSelectedTags.includes(tag.id);
+                    return (
+                      <button
+                        key={tag.id}
+                        type="button"
+                        onClick={() => {
+                          if (isSelected) {
+                            setEditSelectedTags(editSelectedTags.filter((id) => id !== tag.id));
+                          } else {
+                            setEditSelectedTags([...editSelectedTags, tag.id]);
+                          }
+                        }}
+                        className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
+                          isSelected
+                            ? "bg-accent text-paper-light font-medium"
+                            : "bg-paper text-ink-soft border border-ink/10"
+                        }`}
+                      >
+                        {tag.slug}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-medium text-ink mb-1">Creative Prompt</label>
+                <textarea
+                  rows={3}
+                  required
+                  value={editPrompt}
+                  onChange={(e) => setEditPrompt(e.target.value)}
+                  placeholder="Describe the line-art scene, subjects, unhurried gait, and diurnal tau color transitions..."
+                  className="w-full px-3 py-2 rounded-xl border border-ink/15 bg-paper-light text-ink focus:border-accent outline-none font-mono text-[11px]"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-ink/10">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="px-4 py-2 rounded-xl border border-ink/15 text-ink hover:bg-ink/5"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingRegen}
+                  className="px-4 py-2 rounded-xl bg-accent text-paper-light hover:bg-accent-hover font-medium flex items-center gap-2"
+                >
+                  {submittingRegen ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <RotateCcw className="w-3.5 h-3.5" />}
+                  <span>{submittingRegen ? "Rebuilding..." : "Save & Rebuild with LLM"}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

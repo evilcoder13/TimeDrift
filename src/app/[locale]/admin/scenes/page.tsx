@@ -52,8 +52,9 @@ export default function ScenesListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Generate Modal State
+  // Generate & Regenerate Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [regenTarget, setRegenTarget] = useState<SceneItem | null>(null);
   const [formName, setFormName] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [formPrompt, setFormPrompt] = useState("");
@@ -120,11 +121,22 @@ export default function ScenesListPage() {
   }, [scenes]);
 
   const openGenerateModal = () => {
+    setRegenTarget(null);
     setFormName("");
     setFormDescription("Calm line-art animation of peaceful scenery.");
     setFormPrompt("A quiet tea house in the rain with gentle steam rising from a cup and water ripples forming slowly.");
     setFormModel(availableModels[0]?.id || "default");
     setFormSelectedTags(allTags.slice(0, 3).map((t) => t.id));
+    setIsModalOpen(true);
+  };
+
+  const openRegenerateModal = (s: SceneItem) => {
+    setRegenTarget(s);
+    setFormName(s.name);
+    setFormDescription(s.description);
+    setFormPrompt(s.prompt);
+    setFormModel(s.model || availableModels[0]?.id || "default");
+    setFormSelectedTags(s.tags.map((t) => t.id));
     setIsModalOpen(true);
   };
 
@@ -134,24 +146,48 @@ export default function ScenesListPage() {
     setError(null);
 
     try {
-      const res = await fetch("/api/admin/scenes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formName,
-          description: formDescription,
-          prompt: formPrompt,
-          model: formModel,
-          tagIds: formSelectedTags,
-        }),
-      });
+      if (regenTarget) {
+        // Rebuild / Regenerate existing scene
+        const res = await fetch(`/api/admin/scenes/${regenTarget.id}/regenerate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formName,
+            description: formDescription,
+            prompt: formPrompt,
+            model: formModel,
+            tagIds: formSelectedTags,
+          }),
+        });
 
-      if (!res.ok) {
-        const err = await res.json();
-        setError(err.error?.message || "Failed to enqueue scene generation.");
+        if (!res.ok) {
+          const err = await res.json();
+          setError(err.error?.message || "Failed to rebuild scene.");
+        } else {
+          setIsModalOpen(false);
+          fetchScenes();
+        }
       } else {
-        setIsModalOpen(false);
-        fetchScenes();
+        // Create new scene
+        const res = await fetch("/api/admin/scenes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formName,
+            description: formDescription,
+            prompt: formPrompt,
+            model: formModel,
+            tagIds: formSelectedTags,
+          }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          setError(err.error?.message || "Failed to enqueue scene generation.");
+        } else {
+          setIsModalOpen(false);
+          fetchScenes();
+        }
       }
     } catch {
       setError("Error communicating with server.");
@@ -313,6 +349,13 @@ export default function ScenesListPage() {
                       </button>
                     </td>
                     <td className="py-3 px-4 text-right space-x-2">
+                      <button
+                        onClick={() => openRegenerateModal(s)}
+                        className="p-1.5 rounded-lg hover:bg-ink/5 text-ink-soft hover:text-ink transition-colors"
+                        title="Rebuild / Edit parameters & regenerate scene"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                      </button>
                       <Link
                         href={`/${locale}/admin/scenes/${s.id}`}
                         className="inline-flex p-1.5 rounded-lg hover:bg-ink/5 text-ink-soft hover:text-ink transition-colors"
@@ -352,7 +395,7 @@ export default function ScenesListPage() {
           <div className="bg-paper border border-ink/15 shadow-2xl rounded-2xl w-full max-w-lg p-6 animate-fade-in text-xs space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-ink/10">
               <h3 className="font-serif text-lg font-medium text-ink">
-                Synthesize Line-Art Scene (omlx LLM)
+                {regenTarget ? `Rebuild Scene: ${regenTarget.name}` : "Synthesize Line-Art Scene (TimeDrift LLM)"}
               </h3>
               <button onClick={() => setIsModalOpen(false)} className="text-ink-muted hover:text-ink">
                 <X className="w-5 h-5" />
@@ -464,7 +507,11 @@ export default function ScenesListPage() {
                   disabled={submitting}
                   className="px-4 py-2 rounded-xl bg-accent text-paper-light hover:bg-accent-hover font-medium flex items-center gap-2"
                 >
-                  {submitting ? "Synthesizing..." : "Queue Generation (LLM)"}
+                  {submitting
+                    ? "Synthesizing..."
+                    : regenTarget
+                    ? "Rebuild & Synthesize"
+                    : "Queue Generation (LLM)"}
                 </button>
               </div>
             </form>

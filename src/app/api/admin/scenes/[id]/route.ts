@@ -8,6 +8,8 @@ import path from "path";
 const updateSceneSchema = z.object({
   name: z.string().min(1).max(100).optional(),
   description: z.string().min(5).max(300).optional(),
+  prompt: z.string().min(10).max(500).optional(),
+  model: z.string().optional(),
   published: z.boolean().optional(),
   tagIds: z.array(z.string()).optional(),
   sourceCode: z.string().optional(),
@@ -87,6 +89,8 @@ export async function PATCH(
     const updateData: Record<string, unknown> = {};
     if (parsed.data.name !== undefined) updateData.name = parsed.data.name;
     if (parsed.data.description !== undefined) updateData.description = parsed.data.description;
+    if (parsed.data.prompt !== undefined) updateData.prompt = parsed.data.prompt;
+    if (parsed.data.model !== undefined) updateData.model = parsed.data.model;
     if (parsed.data.published !== undefined) updateData.published = parsed.data.published;
     if (parsed.data.tagIds !== undefined) {
       updateData.tags = {
