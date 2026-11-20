@@ -110,13 +110,13 @@ export function SystemHealthDrawer() {
             <div className="mt-6 space-y-3">
               <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-muted">Microservices</h4>
               
-              {/* omlx LLM */}
+              {/* TimeDrift LLM */}
               <div className="p-3.5 rounded-xl border border-ink/10 bg-paper-light flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Server className="w-5 h-5 text-ink-soft" />
                   <div>
-                    <div className="font-medium text-sm text-ink">LLM Server (omlx)</div>
-                    <div className="text-xs text-ink-muted font-mono">{health?.omlx.url || "http://10.1.123.123:8000/v1"}</div>
+                    <div className="font-medium text-sm text-ink">TimeDrift LLM Worker (llama.cpp)</div>
+                    <div className="text-xs text-ink-muted font-mono">{health?.omlx.url || "http://100.100.91.61:8000/v1"}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

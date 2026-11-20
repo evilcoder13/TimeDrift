@@ -6,6 +6,7 @@ export interface SceneGenParams {
   description: string;
   tags: string[];
   prompt?: string;
+  model?: string;
 }
 
 export interface SceneGenAttemptResult {
@@ -28,9 +29,9 @@ export interface SceneGenResult {
   }>;
 }
 
-const DEFAULT_BASE_URL = 'http://10.1.123.123:8000/v1';
-const DEFAULT_MODEL = 'Qwen3.5-4B-3D-Coder';
-const FALLBACK_MODEL = 'gemma-4-12b-4bit';
+const DEFAULT_BASE_URL = 'http://100.100.91.61:8000/v1';
+const DEFAULT_MODEL = 'default';
+const FALLBACK_MODEL = 'default';
 
 /**
  * Extracts TypeScript code block from LLM markdown response.
@@ -174,8 +175,8 @@ export async function generateSceneWithRetries(
   params: SceneGenParams,
   validator?: SceneValidatorFn
 ): Promise<SceneGenResult> {
-  const defaultModel = process.env.LLM_MODEL || DEFAULT_MODEL;
-  const fallbackModel = process.env.LLM_FALLBACK_MODEL || FALLBACK_MODEL;
+  const defaultModel = params.model || process.env.LLM_MODEL || DEFAULT_MODEL;
+  const fallbackModel = process.env.LLM_FALLBACK_MODEL || defaultModel;
   const systemPrompt = await loadSceneSystemPrompt();
 
   const messages: ChatMessage[] = [

@@ -53,7 +53,7 @@ export async function POST(req: Request) {
         name,
         description,
         prompt,
-        model: model || process.env.LLM_MODEL || "Qwen3.5-4B-3D-Coder",
+        model: model || process.env.LLM_MODEL || "default",
         status: "QUEUED",
         published: false,
         tags: {

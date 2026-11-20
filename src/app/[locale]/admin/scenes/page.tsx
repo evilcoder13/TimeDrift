@@ -57,7 +57,10 @@ export default function ScenesListPage() {
   const [formName, setFormName] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [formPrompt, setFormPrompt] = useState("");
-  const [formModel, setFormModel] = useState("Qwen3.5-4B-3D-Coder");
+  const [formModel, setFormModel] = useState("default");
+  const [availableModels, setAvailableModels] = useState<Array<{ id: string; name: string }>>([
+    { id: "default", name: "Qwen2.5-Coder-1.5B (Default Lightweight)" },
+  ]);
   const [formSelectedTags, setFormSelectedTags] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
@@ -68,9 +71,10 @@ export default function ScenesListPage() {
   const fetchScenes = async (silent = false) => {
     if (!silent) setLoading(true);
     try {
-      const [sRes, tRes] = await Promise.all([
+      const [sRes, tRes, mRes] = await Promise.all([
         fetch("/api/admin/scenes"),
         fetch("/api/admin/tags"),
+        fetch("/api/admin/models"),
       ]);
       if (sRes.ok) {
         const sData = await sRes.json();
@@ -79,6 +83,16 @@ export default function ScenesListPage() {
       if (tRes.ok) {
         const tData = await tRes.json();
         setAllTags(tData.tags || []);
+      }
+      if (mRes.ok) {
+        const mData = await mRes.json();
+        if (Array.isArray(mData.models) && mData.models.length > 0) {
+          setAvailableModels(mData.models);
+          // Set first model as default if formModel is still default
+          if (!formModel || formModel === "Qwen3.5-4B-3D-Coder") {
+            setFormModel(mData.models[0].id);
+          }
+        }
       }
     } catch {
       if (!silent) setError("Failed to fetch scenes.");
@@ -109,7 +123,7 @@ export default function ScenesListPage() {
     setFormName("");
     setFormDescription("Calm line-art animation of peaceful scenery.");
     setFormPrompt("A quiet tea house in the rain with gentle steam rising from a cup and water ripples forming slowly.");
-    setFormModel("Qwen3.5-4B-3D-Coder");
+    setFormModel(availableModels[0]?.id || "default");
     setFormSelectedTags(allTags.slice(0, 3).map((t) => t.id));
     setIsModalOpen(true);
   };
@@ -255,7 +269,7 @@ export default function ScenesListPage() {
                       <div className="text-[11px] text-ink-muted truncate max-w-sm">{s.description}</div>
                     </td>
                     <td className="py-3 px-4 font-mono text-ink-soft">
-                      {s.model || "Qwen3.5-4B-3D-Coder"}
+                      {s.model || "default"}
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex flex-wrap gap-1 max-w-xs">
@@ -371,30 +385,28 @@ export default function ScenesListPage() {
               </div>
 
               <div>
-                <label className="block font-medium text-ink mb-1">Model Selection (omlx)</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <label className="flex items-center gap-2 p-2.5 rounded-xl border border-ink/15 bg-paper cursor-pointer font-mono text-[11px]">
-                    <input
-                      type="radio"
-                      name="model"
-                      value="Qwen3.5-4B-3D-Coder"
-                      checked={formModel === "Qwen3.5-4B-3D-Coder"}
-                      onChange={(e) => setFormModel(e.target.value)}
-                      className="accent-accent"
-                    />
-                    <span>Qwen3.5-4B (Primary)</span>
-                  </label>
-                  <label className="flex items-center gap-2 p-2.5 rounded-xl border border-ink/15 bg-paper cursor-pointer font-mono text-[11px]">
-                    <input
-                      type="radio"
-                      name="model"
-                      value="gemma-4-12b-4bit"
-                      checked={formModel === "gemma-4-12b-4bit"}
-                      onChange={(e) => setFormModel(e.target.value)}
-                      className="accent-accent"
-                    />
-                    <span>Gemma-4-12b (Fallback)</span>
-                  </label>
+                <label className="block font-medium text-ink mb-1">Model Selection (TimeDrift LLM)</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {availableModels.map((m) => (
+                    <label
+                      key={m.id}
+                      className={`flex items-center gap-2 p-2.5 rounded-xl border cursor-pointer font-mono text-[11px] transition-colors ${
+                        formModel === m.id
+                          ? "border-accent bg-accent/10 text-ink"
+                          : "border-ink/15 bg-paper text-ink-muted hover:text-ink"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="model"
+                        value={m.id}
+                        checked={formModel === m.id}
+                        onChange={(e) => setFormModel(e.target.value)}
+                        className="accent-accent"
+                      />
+                      <span className="truncate">{m.name}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
 
@@ -452,7 +464,7 @@ export default function ScenesListPage() {
                   disabled={submitting}
                   className="px-4 py-2 rounded-xl bg-accent text-paper-light hover:bg-accent-hover font-medium flex items-center gap-2"
                 >
-                  {submitting ? "Synthesizing..." : "Queue Generation (omlx)"}
+                  {submitting ? "Synthesizing..." : "Queue Generation (LLM)"}
                 </button>
               </div>
             </form>

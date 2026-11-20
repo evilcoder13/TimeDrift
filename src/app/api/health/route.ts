@@ -94,8 +94,8 @@ export async function GET() {
   }
 
   // 4. LLM Server Reachability (GET /models)
-  const llmUrl = process.env.LLM_BASE_URL || "http://10.1.123.123:8000/v1";
-  const defaultModel = process.env.LLM_MODEL || "Qwen3.5-4B-3D-Coder";
+  const llmUrl = process.env.LLM_BASE_URL || "http://100.100.91.61:8000/v1";
+  const defaultModel = process.env.LLM_MODEL || "default";
   try {
     const llmStart = Date.now();
     const ctrl = new AbortController();

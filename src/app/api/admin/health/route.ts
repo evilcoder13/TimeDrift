@@ -6,22 +6,22 @@ export async function GET() {
   try {
     await requireAdmin();
 
-    const omlxUrl = process.env.LLM_BASE_URL || "http://10.1.123.123:8000/v1";
-    const workerUrl = process.env.MUSIC_WORKER_URL || "http://127.0.0.1:8100";
+    const llmUrl = process.env.LLM_BASE_URL || "http://100.100.91.61:8000/v1";
+    const workerUrl = process.env.MUSIC_WORKER_URL || "http://100.100.91.61:8100";
 
-    // Test omlx reachability
-    let omlxReachable = false;
-    let omlxLatency = 0;
+    // Test timedrift_llm reachability
+    let llmReachable = false;
+    let llmLatency = 0;
     try {
       const start = Date.now();
       const ctrl = new AbortController();
       const tid = setTimeout(() => ctrl.abort(), 3000);
-      const res = await fetch(`${omlxUrl}/models`, { signal: ctrl.signal });
+      const res = await fetch(`${llmUrl}/models`, { signal: ctrl.signal });
       clearTimeout(tid);
-      omlxLatency = Date.now() - start;
-      omlxReachable = res.ok;
+      llmLatency = Date.now() - start;
+      llmReachable = res.ok;
     } catch {
-      omlxReachable = false;
+      llmReachable = false;
     }
 
     // Test Music Worker reachability
@@ -47,10 +47,15 @@ export async function GET() {
 
     return NextResponse.json({
       health: {
+        llm: {
+          url: llmUrl,
+          reachable: llmReachable,
+          latencyMs: llmLatency,
+        },
         omlx: {
-          url: omlxUrl,
-          reachable: omlxReachable,
-          latencyMs: omlxLatency,
+          url: llmUrl,
+          reachable: llmReachable,
+          latencyMs: llmLatency,
         },
         worker: {
           url: workerUrl,

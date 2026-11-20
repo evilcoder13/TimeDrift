@@ -291,6 +291,7 @@ export class JobRunner extends EventEmitter {
             description: scene.description,
             tags: scene.tags.map((t) => t.slug),
             prompt: scene.prompt,
+            model: scene.model || undefined,
           },
           async (candidateCode) => {
             await prisma.genJob.update({

@@ -186,7 +186,7 @@ export default function SceneStudioDetailPage() {
               )}
             </div>
             <p className="text-xs text-ink-soft font-mono">
-              Model: {scene?.model || "Qwen3.5-4B"} | ViewBox 1920x1080 | @timedrift/scene-api
+              Model: {scene?.model || "default"} | ViewBox 1920x1080 | @timedrift/scene-api
             </p>
           </div>
         </div>
